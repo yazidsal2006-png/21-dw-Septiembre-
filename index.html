@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Golden Flower Gift for Mitka</title>
+  <title>Interactive Golden Flower Gift for Mitca</title>
   <style>
     * {
       box-sizing: border-box;
@@ -12,487 +12,214 @@
     }
 
     body {
-      background-color: #0d0814;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #050505;
+      color: #ffffff;
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
       overflow-x: hidden;
-      color: #fff;
-      min-height: 100vh;
+      padding: 20px 10px;
     }
 
-    /* CONTENEDOR DE SOLES (SECCIÓN INICIAL) */
-    #suns-container {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* Contenedor de la lluvia de soles arriba */
+    .sun-rain-container {
       width: 100%;
-      height: 100%;
+      max-width: 400px;
+      height: 220px;
+      position: relative;
       pointer-events: none;
-      z-index: 1;
-      transition: opacity 1s ease;
     }
 
-    .tangled-sun {
+    .sun-particle {
       position: absolute;
-      bottom: -60px;
       border-radius: 50%;
-      opacity: 0.8;
-      animation: floatUp 8s linear infinite;
+      animation: floatSun ease-in-out infinite alternate;
     }
 
-    /* Colores del sol: Amarillo, Morado, Blanco */
-    .sun-yellow {
-      background: radial-gradient(circle, #ffe600 30%, #ffaa00 70%, transparent 100%);
-      box-shadow: 0 0 15px #ffe600;
-    }
-    .sun-purple {
-      background: radial-gradient(circle, #d084ff 30%, #8a2be2 70%, transparent 100%);
-      box-shadow: 0 0 15px #d084ff;
-    }
-    .sun-white {
-      background: radial-gradient(circle, #ffffff 30%, #e0f7fa 70%, transparent 100%);
-      box-shadow: 0 0 15px #ffffff;
-    }
-
-    @keyframes floatUp {
+    @keyframes floatSun {
       0% {
-        transform: translateY(0) scale(0.6) rotate(0deg);
-        opacity: 0;
+        transform: translateY(0) scale(0.9);
+        opacity: 0.7;
       }
-      20% { opacity: 0.8; }
-      80% { opacity: 0.8; }
       100% {
-        transform: translateY(-115vh) scale(1.1) rotate(180deg);
-        opacity: 0;
-      }
-    }
-
-    /* PANTALLA INICIAL */
-    #hero-screen {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-    }
-
-    #hero-screen h1 {
-      font-size: 2.8rem;
-      color: #ffd700;
-      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-      margin-bottom: 15px;
-    }
-
-    #hero-screen p {
-      font-size: 1.2rem;
-      color: #e0d0f0;
-      max-width: 500px;
-      margin-bottom: 30px;
-    }
-
-    .start-btn {
-      background: linear-gradient(45deg, #ffd700, #ff8c00);
-      border: none;
-      padding: 15px 35px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #1a002c;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .start-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
-    }
-
-    /* SECCIÓN DE LAS 13 FLORES */
-    #garden-screen {
-      display: none;
-      position: relative;
-      z-index: 2;
-      padding: 40px 20px;
-      min-height: 100vh;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .garden-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 40px;
-      width: 100%;
-      max-width: 1100px;
-      margin-top: 30px;
-    }
-
-    .flower-wrapper {
-      position: relative;
-      height: 260px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      cursor: pointer;
-    }
-
-    /* TALLO Y HOJAS */
-    .stem-container {
-      position: absolute;
-      bottom: 0;
-      width: 60px;
-      height: 160px;
-      display: flex;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .stem {
-      width: 6px;
-      height: 0%;
-      background: linear-gradient(to top, #2e7d32, #4caf50);
-      border-radius: 3px;
-      transition: height 1s ease-out;
-    }
-
-    .leaf {
-      position: absolute;
-      width: 24px;
-      height: 12px;
-      background-color: #4caf50;
-      border-radius: 12px 0;
-      opacity: 0;
-      transition: opacity 0.5s ease 0.8s;
-    }
-
-    .leaf.left {
-      left: 8px;
-      top: 50%;
-      transform: rotate(-30deg);
-    }
-
-    .leaf.right {
-      right: 8px;
-      top: 35%;
-      transform: rotate(210deg);
-    }
-
-    .flower-wrapper.active .stem {
-      height: 100%;
-    }
-
-    .flower-wrapper.active .leaf {
-      opacity: 1;
-    }
-
-    /* CABEZA DE LA FLOR (Gira en su propio eje) */
-    .flower-head {
-      position: absolute;
-      top: 15px;
-      width: 100px;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Rotación en su propio eje */
-      animation: spinSelf 12s linear infinite;
-    }
-
-    @keyframes spinSelf {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* PÉTALOS (Detrás) */
-    .petals-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 1; /* Detrás del centro */
-    }
-
-    .petal {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 22px;
-      height: 45px;
-      background: linear-gradient(to top, #ffca28, #fff59d);
-      border-radius: 50% 50% 10% 10%;
-      transform-origin: center bottom;
-      box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
-    }
-
-    /* CENTRO DE LA FLOR (Adelante) */
-    .flower-center {
-      position: absolute;
-      width: 38px;
-      height: 38px;
-      background: radial-gradient(circle, #5d4037 30%, #3e2723 90%);
-      border-radius: 50%;
-      z-index: 2; /* Adelante de los pétalos */
-      border: 2px solid #8d6e63;
-      box-shadow: inset 0 0 5px #000;
-    }
-
-    /* BRILLITOS AL HACER CLICK */
-    .sparkle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background-color: #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #ffd700;
-      pointer-events: none;
-      z-index: 10;
-      animation: sparkleFade 0.8s ease-out forwards;
-    }
-
-    @keyframes sparkleFade {
-      0% {
-        transform: translate(0, 0) scale(1);
+        transform: translateY(-12px) scale(1.1);
         opacity: 1;
       }
+    }
+
+    /* Contenedor principal de la flor */
+    .flower-container {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-top: -30px;
+    }
+
+    .golden-flower-svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    /* Resplandor y animación mágica de la flor */
+    .magic-flower {
+      animation: magicGlow 3.5s ease-in-out infinite alternate;
+      transform-origin: 250px 220px;
+    }
+
+    @keyframes magicGlow {
+      0% {
+        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8)) 
+                drop-shadow(0 0 25px rgba(255, 183, 3, 0.5));
+      }
       100% {
-        transform: translate(var(--dx), var(--dy)) scale(0);
-        opacity: 0;
+        filter: drop-shadow(0 0 22px rgba(255, 240, 160, 1)) 
+                drop-shadow(0 0 45px rgba(251, 133, 0, 0.85))
+                drop-shadow(0 0 65px rgba(224, 170, 255, 0.4));
       }
     }
 
-    /* FLOR FINAL BONITA */
-    #final-flower-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(13, 8, 20, 0.95);
-      z-index: 20;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* Texto inferior intacto */
+    .footer-text {
       text-align: center;
+      font-style: italic;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: #f0f0f0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6),
+                   0 0 20px rgba(255, 215, 0, 0.4);
+      margin-top: -60px;
+      margin-bottom: 20px;
+      z-index: 10;
     }
 
-    .golden-flower-large {
-      position: relative;
-      width: 180px;
-      height: 180px;
-      margin-bottom: 25px;
-      animation: spinSelf 20s linear infinite;
-    }
-
-    .golden-flower-large .flower-center {
-      width: 65px;
-      height: 65px;
-      border: 3px solid #ffb300;
-    }
-
-    .golden-flower-large .petal {
-      width: 35px;
-      height: 80px;
-      background: linear-gradient(to top, #ff8f00, #ffeb3b, #ffffff);
-      box-shadow: 0 0 15px #ffd700;
-    }
-
-    #final-message {
-      font-size: 1.8rem;
-      color: #ffd700;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      max-width: 600px;
-      padding: 0 20px;
+    .heart-icon {
+      display: inline-block;
+      color: #ffffff;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+      margin-left: 4px;
     }
   </style>
 </head>
 <body>
 
-  <!-- SOLLECITOS DE FONDO (ENREDADOS) -->
-  <div id="suns-container"></div>
+  <!-- Lluvia de soles (amarillo, blanco, morado) intacta -->
+  <div class="sun-rain-container" id="sunContainer"></div>
 
-  <!-- PANTALLA INICIAL -->
-  <div id="hero-screen">
-    <h1>Para Mitka ✨</h1>
-    <p>Un pequeño detalle especial lleno de luz y flores doradas.</p>
-    <button class="start-btn" onclick="startExperience()">Descubrir Regalo</button>
+  <!-- Flor Principal de Enredados de Alta Calidad -->
+  <div class="flower-container">
+    <svg viewBox="0 0 500 750" class="golden-flower-svg">
+      <defs>
+        <!-- Filtro de resplandor para los pétalos y centro -->
+        <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFFFFF" />
+          <stop offset="25%" stop-color="#FFF3a1" />
+          <stop offset="65%" stop-color="#FFB703" />
+          <stop offset="100%" stop-color="#FB8500" />
+        </radialGradient>
+
+        <radialGradient id="centerGlow" cx="50%" cy="50%" r="40%">
+          <stop offset="0%" stop-color="#FFFFFF" />
+          <stop offset="45%" stop-color="#F72585" />
+          <stop offset="85%" stop-color="#7209B7" />
+          <stop offset="100%" stop-color="#3A0CA3" />
+        </radialGradient>
+
+        <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#0B2B18" />
+          <stop offset="50%" stop-color="#1B4332" />
+          <stop offset="100%" stop-color="#2D6A4F" />
+        </linearGradient>
+
+        <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#52B788" />
+          <stop offset="50%" stop-color="#2D6A4F" />
+          <stop offset="100%" stop-color="#081C15" />
+        </linearGradient>
+      </defs>
+
+      <!-- Base Vegetal Orgánica (Hojas Realistas) -->
+      <g class="leaf-base">
+        <path d="M 250 720 C 170 710, 90 650, 40 600 C 100 590, 190 640, 250 720 Z" fill="url(#leafGrad)" />
+        <path d="M 250 720 C 330 710, 410 650, 460 600 C 400 590, 310 640, 250 720 Z" fill="url(#leafGrad)" />
+        <path d="M 250 720 C 140 680, 70 560, 90 500 C 150 530, 210 620, 250 720 Z" fill="url(#leafGrad)" opacity="0.95" />
+        <path d="M 250 720 C 360 680, 430 560, 410 500 C 350 530, 290 620, 250 720 Z" fill="url(#leafGrad)" opacity="0.95" />
+        <path d="M 250 720 C 180 640, 140 520, 170 450 C 210 490, 230 580, 250 720 Z" fill="url(#leafGrad)" opacity="0.85" />
+        <path d="M 250 720 C 320 640, 360 520, 330 450 C 290 490, 270 580, 250 720 Z" fill="url(#leafGrad)" opacity="0.85" />
+      </g>
+
+      <!-- Tallo Curvado Orgánico con Grosor Realista -->
+      <path d="M 250 720 Q 230 520 255 380 T 250 220" fill="none" stroke="url(#stemGrad)" stroke-width="10" stroke-linecap="round" />
+
+      <!-- Hojas a lo largo del tallo -->
+      <path d="M 248 480 Q 180 450 160 410 Q 210 420 250 460 Z" fill="url(#leafGrad)" />
+      <path d="M 253 380 Q 320 350 340 310 Q 290 320 251 360 Z" fill="url(#leafGrad)" />
+
+      <!-- Flor Dorada Mágica de Enredados -->
+      <g class="magic-flower">
+        <!-- Pétalos Traseros -->
+        <path d="M 250 220 C 180 170, 110 160, 90 190 C 120 220, 190 230, 250 220 Z" fill="url(#petalGrad)" />
+        <path d="M 250 220 C 320 170, 390 160, 410 190 C 380 220, 310 230, 250 220 Z" fill="url(#petalGrad)" />
+        <path d="M 250 220 C 170 120, 180 40, 220 30 C 240 80, 245 150, 250 220 Z" fill="url(#petalGrad)" />
+        <path d="M 250 220 C 330 120, 320 40, 280 30 C 260 80, 255 150, 250 220 Z" fill="url(#petalGrad)" />
+
+        <!-- Pétalos Principales Estilo Azucena / Lirio Dorado -->
+        <path d="M 250 220 Q 140 160 120 90 Q 200 130 250 220 Z" fill="url(#petalGrad)" />
+        <path d="M 250 220 Q 360 160 380 90 Q 300 130 250 220 Z" fill="url(#petalGrad)" />
+        <path d="M 250 220 Q 250 80 250 50 Q 270 130 250 220 Z" fill="url(#petalGrad)" />
+
+        <!-- Centro Mágico Místico -->
+        <circle cx="250" cy="205" r="22" fill="url(#centerGlow)" />
+
+        <!-- Pistilos Curvos con Puntas Brillantes -->
+        <path d="M 250 205 Q 220 140 195 90 Q 205 85 215 95" fill="none" stroke="#FFF8D6" stroke-width="3" stroke-linecap="round" />
+        <path d="M 250 205 Q 280 140 305 90 Q 295 85 285 95" fill="none" stroke="#FFF8D6" stroke-width="3" stroke-linecap="round" />
+        <path d="M 250 205 Q 250 120 250 70" fill="none" stroke="#FFE45E" stroke-width="3.5" stroke-linecap="round" />
+        
+        <circle cx="250" cy="65" r="6" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
+        <circle cx="195" cy="85" r="5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
+        <circle cx="305" cy="85" r="5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
+      </g>
+    </svg>
   </div>
 
-  <!-- JARDÍN DE 13 FLORES -->
-  <div id="garden-screen">
-    <h2 style="color: #ffd700; margin-bottom: 10px;">Las 13 Flores Doradas</h2>
-    <p style="color: #c7b3e5; margin-bottom: 20px;">Haz clic en cada espacio para hacer crecer las flores.</p>
-
-    <div class="garden-grid" id="garden-grid"></div>
-  </div>
-
-  <!-- FLOR FINAL MEJORADA -->
-  <div id="final-flower-modal">
-    <div class="golden-flower-large" id="final-golden-flower"></div>
-    <div id="final-message">¡Has hecho florecer todo el jardín para Mitka! 🌸✨</div>
+  <!-- Texto Inferior Dedicado Manteniendo el Formato -->
+  <div class="footer-text">
+    Con cariño de Yazid, ¿para quién más? Si solo para ti, Mitca. <span class="heart-icon">♥</span>
   </div>
 
   <script>
-    // GENERAR SOLES FLOTANTES EN EL FONDO INICIAL
-    const sunsContainer = document.getElementById('suns-container');
-    const sunColors = ['sun-yellow', 'sun-purple', 'sun-white'];
+    // Generación dinámica de la lluvia de soles arriba (Amarillo, Blanco, Morado)
+    const container = document.getElementById('sunContainer');
+    const colors = ['#FFD700', '#FFFFFF', '#D8B4FE', '#FFEA79'];
+    const totalSuns = 22;
 
-    for (let i = 0; i < 25; i++) {
-      createSun();
-    }
-
-    function createSun() {
+    for (let i = 0; i < totalSuns; i++) {
       const sun = document.createElement('div');
-      const size = Math.random() * 25 + 15;
-      const colorClass = sunColors[Math.floor(Math.random() * sunColors.length)];
+      sun.className = 'sun-particle';
+      
+      const size = Math.random() * 14 + 10;
+      const posX = Math.random() * 80 + 10;
+      const posY = Math.random() * 180 + 10;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const duration = Math.random() * 2 + 2;
+      const delay = Math.random() * 2;
 
-      sun.className = `tangled-sun ${colorClass}`;
       sun.style.width = `${size}px`;
       sun.style.height = `${size}px`;
-      sun.style.left = `${Math.random() * 100}%`;
-      sun.style.animationDuration = `${Math.random() * 5 + 6}s`;
-      sun.style.animationDelay = `${Math.random() * 5}s`;
+      sun.style.left = `${posX}%`;
+      sun.style.top = `${posY}px`;
+      sun.style.backgroundColor = color;
+      sun.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+      sun.style.animationDuration = `${duration}s`;
+      sun.style.animationDelay = `${delay}s`;
 
-      sunsContainer.appendChild(sun);
-    }
-
-    // PASAR A LA SECCIÓN DE FLORES Y ELIMINAR LOS SOLES
-    let bloomedCount = 0;
-
-    function startExperience() {
-      // 1. Ocultar soles de fondo
-      sunsContainer.style.opacity = '0';
-      setTimeout(() => {
-        sunsContainer.style.display = 'none';
-      }, 1000);
-
-      // 2. Cambiar de pantalla
-      document.getElementById('hero-screen').style.display = 'none';
-      const gardenScreen = document.getElementById('garden-screen');
-      gardenScreen.style.display = 'flex';
-
-      // 3. Crear las 13 flores
-      buildGarden();
-    }
-
-    // CREAR LAS 13 FLORES
-    function buildGarden() {
-      const grid = document.getElementById('garden-grid');
-      grid.innerHTML = '';
-
-      for (let i = 0; i < 13; i++) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'flower-wrapper';
-
-        // Tallo y hojas
-        const stemContainer = document.createElement('div');
-        stemContainer.className = 'stem-container';
-
-        const stem = document.createElement('div');
-        stem.className = 'stem';
-
-        const leaf1 = document.createElement('div');
-        leaf1.className = 'leaf left';
-        const leaf2 = document.createElement('div');
-        leaf2.className = 'leaf right';
-
-        stemContainer.appendChild(stem);
-        stemContainer.appendChild(leaf1);
-        stemContainer.appendChild(leaf2);
-
-        // Cabeza de la flor
-        const flowerHead = document.createElement('div');
-        flowerHead.className = 'flower-head';
-
-        // Centro (Adelante)
-        const center = document.createElement('div');
-        center.className = 'flower-center';
-
-        // Pétalos (Atrás)
-        const petalsContainer = document.createElement('div');
-        petalsContainer.className = 'petals-container';
-
-        const totalPetals = 8;
-        for (let p = 0; p < totalPetals; p++) {
-          const petal = document.createElement('div');
-          petal.className = 'petal';
-          const angle = (360 / totalPetals) * p;
-          petal.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
-          petalsContainer.appendChild(petal);
-        }
-
-        flowerHead.appendChild(center);
-        flowerHead.appendChild(petalsContainer);
-
-        wrapper.appendChild(stemContainer);
-        wrapper.appendChild(flowerHead);
-
-        // Evento de clic para hacer florecer y soltar brillitos
-        wrapper.addEventListener('click', (e) => {
-          createSparkles(e.clientX, e.clientY);
-
-          if (!wrapper.classList.contains('active')) {
-            wrapper.classList.add('active');
-            bloomedCount++;
-
-            if (bloomedCount === 13) {
-              setTimeout(showFinalFlower, 1200);
-            }
-          }
-        });
-
-        grid.appendChild(wrapper);
-      }
-    }
-
-    // GENERAR EFFECTO DE BRILLITOS (SPARKLES)
-    function createSparkles(x, y) {
-      for (let i = 0; i < 12; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.left = `${x}px`;
-        sparkle.style.top = `${y}px`;
-
-        const dx = (Math.random() - 0.5) * 120 + 'px';
-        const dy = (Math.random() - 0.5) * 120 + 'px';
-        sparkle.style.setProperty('--dx', dx);
-        sparkle.style.setProperty('--dy', dy);
-
-        document.body.appendChild(sparkle);
-
-        setTimeout(() => sparkle.remove(), 800);
-      }
-    }
-
-    // MOSTRAR LA FLOR FINAL MEJORADA
-    function showFinalFlower() {
-      const modal = document.getElementById('final-flower-modal');
-      const finalFlower = document.getElementById('final-golden-flower');
-
-      // Generar pétalos dorados para la flor grande final
-      const center = document.createElement('div');
-      center.className = 'flower-center';
-
-      const petalsContainer = document.createElement('div');
-      petalsContainer.className = 'petals-container';
-
-      const totalPetals = 12;
-      for (let p = 0; p < totalPetals; p++) {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-        const angle = (360 / totalPetals) * p;
-        petal.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
-        petalsContainer.appendChild(petal);
-      }
-
-      finalFlower.appendChild(center);
-      finalFlower.appendChild(petalsContainer);
-
-      modal.style.display = 'flex';
+      container.appendChild(sun);
     }
   </script>
 </body>
