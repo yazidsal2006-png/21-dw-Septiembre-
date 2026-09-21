@@ -173,15 +173,12 @@
       animation: growStem 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
-    /* ORDEN DE APARICIÓN CORREGIDO: */
-    /* 1. PRIMERO APARECEN LOS PÉTALOS (a los 1.4s cuando termina de crecer el tallo) */
     .petals-blooming-group {
       transform: scale(0);
       transform-origin: center;
       animation: bloomPetals 1.0s cubic-bezier(0.34, 1.25, 0.64, 1) forwards 1.4s;
     }
 
-    /* 2. LUEGO APARECE LA PARTE CAFECITA / CENTRO DE LA FLOR (a los 2.2s, después de los pétalos) */
     .flower-core {
       transform: scale(0);
       transform-origin: center;
@@ -216,31 +213,60 @@
       animation: growHeroStem 3.2s ease-out forwards 1.2s;
     }
 
+    /* Animaciones individuales para las 3 cabezas */
     .hero-head-left {
-      transform: scale(0);
-      transform-origin: 150px 220px;
-      animation: bloomHeroHead 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.8s;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bloomHeroLeft 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.8s, rotateHeroLeft 22s linear infinite 5.8s;
     }
 
     .hero-head-center {
-      transform: scale(0);
-      transform-origin: 300px 140px;
-      animation: bloomHeroHead 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.3s;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bloomHeroCenter 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.3s, rotateHeroCenter 25s linear infinite 6.5s;
     }
 
     .hero-head-right {
-      transform: scale(0);
-      transform-origin: 450px 240px;
-      animation: bloomHeroHead 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.0s;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bloomHeroRight 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.0s, rotateHeroRight 20s linear infinite 6.0s;
+    }
+
+    @keyframes growHeroLeaves { to { transform: scale(1); } }
+    @keyframes growHeroStem { to { stroke-dashoffset: 0; } }
+
+    /* Escalado de apertura según tamaño */
+    @keyframes bloomHeroLeft {
+      0% { transform: scale(0); }
+      100% { transform: scale(0.85); }
+    }
+    @keyframes bloomHeroCenter {
+      0% { transform: scale(0); }
+      100% { transform: scale(1.15); }
+    }
+    @keyframes bloomHeroRight {
+      0% { transform: scale(0); }
+      100% { transform: scale(0.80); }
+    }
+
+    /* Rotación sobre su propio eje en sentido horario y antihorario */
+    @keyframes rotateHeroLeft {
+      from { transform: scale(0.85) rotate(0deg); }
+      to { transform: scale(0.85) rotate(360deg); }
+    }
+    @keyframes rotateHeroCenter {
+      from { transform: scale(1.15) rotate(0deg); }
+      to { transform: scale(1.15) rotate(-360deg); }
+    }
+    @keyframes rotateHeroRight {
+      from { transform: scale(0.80) rotate(0deg); }
+      to { transform: scale(0.80) rotate(360deg); }
     }
 
     .hero-glow-pulse {
       animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 6.5s;
     }
 
-    @keyframes growHeroLeaves { to { transform: scale(1); } }
-    @keyframes growHeroStem { to { stroke-dashoffset: 0; } }
-    @keyframes bloomHeroHead { to { transform: scale(1); } }
     @keyframes pulseHeroGlow {
       0% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)); }
       100% { filter: drop-shadow(0 0 45px rgba(255, 235, 150, 0.98)); }
@@ -438,7 +464,7 @@
       }, 1100);
     }
 
-    /* 3. GENERADOR DE FLORES CORREGIDO Y MEJORADO */
+    /* 3. GENERADOR DE FLORES INTERACTIVAS INICIALES */
     function spawnInteractiveFlower(targetX, targetY) {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
@@ -446,7 +472,6 @@
       const stemHeight = height - targetY;
       const fWidth = 240;
 
-      // ESCALA SEGÚN ALTURA: Entre más alto toque, más grande es la flor.
       const heightRatio = 1 - (targetY / height);
       const flowerScale = 0.65 + (heightRatio * 0.70); 
 
@@ -456,7 +481,6 @@
       svg.style.left = `${targetX - fWidth/2}px`;
       svg.style.top = `${targetY}px`;
 
-      // Tallo EXACTO
       const stem = document.createElementNS(svgNS, "path");
       const curveX = (Math.random() - 0.5) * 35;
       stem.setAttribute("d", `M ${fWidth/2} ${stemHeight} Q ${fWidth/2 + curveX} ${stemHeight * 0.5} ${fWidth/2} 35`);
@@ -467,7 +491,6 @@
       stem.setAttribute("class", "stem-path");
       svg.appendChild(stem);
 
-      // Hojas del tallo EXACTAS
       const leafGroup = document.createElementNS(svgNS, "g");
       
       const leaf1 = document.createElementNS(svgNS, "path");
@@ -482,7 +505,6 @@
       leafGroup.appendChild(leaf2);
       svg.appendChild(leafGroup);
 
-      // CABEZA DE LA FLOR CON ESCALA DE ALTURA
       const flowerHeadGroup = document.createElementNS(svgNS, "g");
       flowerHeadGroup.setAttribute("transform", `translate(${fWidth/2}, 35) scale(${flowerScale.toFixed(2)})`);
 
@@ -495,7 +517,6 @@
       coreGroup.setAttribute("class", "flower-core");
 
       if (flowerType === 0) {
-        // GIRASOL REALISTA
         const petals = 18;
         for (let i = 0; i < petals; i++) {
           const angle = (360 / petals) * i;
@@ -513,7 +534,6 @@
         coreGroup.appendChild(center);
 
       } else if (flowerType === 1) {
-        // TULIPÁN AMARILLO
         const t1 = document.createElementNS(svgNS, "path");
         t1.setAttribute("d", "M 0 0 C -26 -20 -22 -50 0 -54 C 22 -50 26 -20 0 0");
         t1.setAttribute("fill", "#ffcc00");
@@ -537,7 +557,6 @@
         coreGroup.appendChild(center);
 
       } else if (flowerType === 2) {
-        // MARGARITA SILVESTRE DOBLE
         const petals = 14;
         for (let i = 0; i < petals; i++) {
           const angle = (360 / petals) * i;
@@ -553,7 +572,6 @@
         coreGroup.appendChild(center);
 
       } else if (flowerType === 3) {
-        // ROSA AMARILLA MULTICAPA
         const layer1 = document.createElementNS(svgNS, "path");
         layer1.setAttribute("d", "M 0 0 C -35 -20 -30 -45 0 -48 C 30 -45 35 -20 0 0");
         layer1.setAttribute("fill", "#ffae00");
@@ -577,7 +595,6 @@
         coreGroup.appendChild(center);
 
       } else {
-        // LIRIO DORADO ELEGANTE
         const petals = 6;
         for (let i = 0; i < petals; i++) {
           const angle = (360 / petals) * i;
@@ -602,7 +619,7 @@
       emitSparkles(targetX, targetY, 14, false);
     }
 
-    /* 4. TRES GIRASOLES HÉROE EN 3D CON BRILLES Y SOLES DE ENREDADOS */
+    /* 4. TRES GIRASOLES HÉROE CORREGIDOS Y ANIMADOS CON ROTACIÓN */
     function spawnThreeSunflowersHero() {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
@@ -718,8 +735,8 @@
       stemsGroup.appendChild(stemRight);
       stemsGroup.appendChild(stemCentral);
 
-      // Función creadora de Cabeza de Girasol
-      function createSunflowerHead(cx, cy, scale, classAnim) {
+      // Creador de Cabeza de Girasol Centrada
+      function createSunflowerHead(classAnim) {
         const headGroup = document.createElementNS(svgNS, "g");
         headGroup.setAttribute("class", `${classAnim} hero-glow-pulse`);
 
@@ -727,9 +744,9 @@
         for (let i = 0; i < petalsCount; i++) {
           const angle = (360 / petalsCount) * i;
           const petal = document.createElementNS(svgNS, "path");
-          petal.setAttribute("d", `M ${cx} ${cy} C ${cx - 16 * scale} ${cy - 35 * scale} ${cx - 12 * scale} ${cy - 85 * scale} ${cx} ${cy - 95 * scale} C ${cx + 12 * scale} ${cy - 85 * scale} ${cx + 16 * scale} ${cy - 35 * scale} ${cx} ${cy}`);
+          petal.setAttribute("d", "M 0 0 C -16 -35 -12 -85 0 -95 C 12 -85 16 -35 0 0");
           petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad1)" : "url(#sfPetalGrad2)");
-          petal.setAttribute("transform", `rotate(${angle}, ${cx}, ${cy})`);
+          petal.setAttribute("transform", `rotate(${angle})`);
           petal.setAttribute("filter", "url(#goldGlow)");
           headGroup.appendChild(petal);
         }
@@ -738,48 +755,68 @@
         for (let i = 0; i < innerPetalsCount; i++) {
           const angle = (360 / innerPetalsCount) * i + 11;
           const petal = document.createElementNS(svgNS, "path");
-          petal.setAttribute("d", `M ${cx} ${cy} C ${cx - 12 * scale} ${cy - 25 * scale} ${cx - 9 * scale} ${cy - 65 * scale} ${cx} ${cy - 72 * scale} C ${cx + 9 * scale} ${cy - 65 * scale} ${cx + 12 * scale} ${cy - 25 * scale} ${cx} ${cy}`);
+          petal.setAttribute("d", "M 0 0 C -12 -25 -9 -65 0 -72 C 9 -65 12 -25 0 0");
           petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad2)" : "url(#sfPetalGrad1)");
-          petal.setAttribute("transform", `rotate(${angle}, ${cx}, ${cy})`);
+          petal.setAttribute("transform", `rotate(${angle})`);
           headGroup.appendChild(petal);
         }
 
         const centerCore = document.createElementNS(svgNS, "circle");
-        centerCore.setAttribute("cx", cx);
-        centerCore.setAttribute("cy", cy);
-        centerCore.setAttribute("r", 28 * scale);
+        centerCore.setAttribute("cx", 0);
+        centerCore.setAttribute("cy", 0);
+        centerCore.setAttribute("r", 28);
         centerCore.setAttribute("fill", "url(#sfCenterGrad)");
         centerCore.setAttribute("stroke", "#ffd700");
-        centerCore.setAttribute("stroke-width", 2 * scale);
+        centerCore.setAttribute("stroke-width", 2);
         centerCore.setAttribute("filter", "drop-shadow(0 0 8px rgba(0,0,0,0.8))");
         headGroup.appendChild(centerCore);
 
         return headGroup;
       }
 
-      const headLeft = createSunflowerHead(150, 220, 0.82, "hero-head-left");
-      const headCentral = createSunflowerHead(300, 140, 1.1, "hero-head-center");
-      const headRight = createSunflowerHead(450, 240, 0.78, "hero-head-right");
+      // Grupo envolvente para posicionamiento exacto
+      const posLeft = document.createElementNS(svgNS, "g");
+      posLeft.setAttribute("transform", "translate(150, 220)");
+      posLeft.appendChild(createSunflowerHead("hero-head-left"));
+
+      const posCentral = document.createElementNS(svgNS, "g");
+      posCentral.setAttribute("transform", "translate(300, 140)");
+      posCentral.appendChild(createSunflowerHead("hero-head-center"));
+
+      const posRight = document.createElementNS(svgNS, "g");
+      posRight.setAttribute("transform", "translate(450, 240)");
+      posRight.appendChild(createSunflowerHead("hero-head-right"));
 
       svg.appendChild(baseLeaves);
       svg.appendChild(stemsGroup);
-      svg.appendChild(headLeft);
-      svg.appendChild(headRight);
-      svg.appendChild(headCentral);
+      svg.appendChild(posLeft);
+      svg.appendChild(posRight);
+      svg.appendChild(posCentral);
 
       garden.appendChild(svg);
 
-      // Efecto interactivo al tocar
+      // Coordenadas reales relativas en la pantalla para las partículas de los 3 girasoles
+      function triggerAllSunflowersSparkles() {
+        const rect = svg.getBoundingClientRect();
+        const scaleX = rect.width / fWidth;
+        const scaleY = rect.height / fHeight;
+
+        // Girasol Izquierdo
+        emitTangledSparkles(rect.left + (150 * scaleX), rect.top + (220 * scaleY), 35);
+        // Girasol Central
+        emitTangledSparkles(rect.left + (300 * scaleX), rect.top + (140 * scaleY), 45);
+        // Girasol Derecho
+        emitTangledSparkles(rect.left + (450 * scaleX), rect.top + (240 * scaleY), 35);
+      }
+
       svg.addEventListener('click', (evt) => {
         evt.stopPropagation();
-        const rect = svg.getBoundingClientRect();
-        emitTangledSparkles(width / 2, rect.top + 160, 50);
+        triggerAllSunflowersSparkles();
       });
 
-      // Emisiones automáticas de destellos y soles amarillos, blancos y morados
+      // Emisión automática para los 3 girasoles
       setTimeout(() => {
-        const rect = svg.getBoundingClientRect();
-        emitTangledSparkles(width / 2, rect.top + 160, 90);
+        triggerAllSunflowersSparkles();
       }, 6200);
 
       setTimeout(() => {
@@ -792,13 +829,13 @@
       for (let i = 0; i < count; i++) {
         const isSun = includeSuns && Math.random() < 0.38;
         const randColor = Math.random();
-        let colorStr = "255, 215, 0"; // Amarillo
-        if (randColor < 0.35) colorStr = "255, 255, 255"; // Blanco
-        else if (randColor < 0.65) colorStr = "215, 140, 255"; // Morado tipo Rapunzel
+        let colorStr = "255, 215, 0"; 
+        if (randColor < 0.35) colorStr = "255, 255, 255"; 
+        else if (randColor < 0.65) colorStr = "215, 140, 255"; 
 
         particles.push({
-          x: centerX + (Math.random() - 0.5) * 60,
-          y: centerY + (Math.random() - 0.5) * 40,
+          x: centerX + (Math.random() - 0.5) * 50,
+          y: centerY + (Math.random() - 0.5) * 30,
           size: isSun ? (Math.random() * 4 + 5) : (Math.random() * 3 + 1.5),
           color: colorStr,
           speedY: -(Math.random() * 2.8 + 0.8),
