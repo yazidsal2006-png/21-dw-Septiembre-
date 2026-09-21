@@ -192,7 +192,7 @@
     @keyframes bloomPetals { to { transform: scale(1); } }
     @keyframes popCore { to { transform: scale(1); } }
 
-    /* FLOR HÉROE (LIRIO DORADO TANGLED EN 3D) */
+    /* TRES GIRASOLES FINALES HÉROE */
     .hero-container {
       position: absolute;
       left: 50%;
@@ -211,33 +211,39 @@
     }
 
     .hero-stem {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: growHeroStem 3.2s ease-out forwards 1.5s;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: growHeroStem 3.2s ease-out forwards 1.2s;
     }
 
-    .hero-petals-open {
+    .hero-head-left {
       transform: scale(0);
-      transform-origin: 200px 180px;
-      animation: bloomHeroPetals 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.5s;
+      transform-origin: 150px 220px;
+      animation: bloomHeroHead 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.8s;
     }
 
-    .hero-core-pop {
+    .hero-head-center {
       transform: scale(0);
-      transform-origin: 200px 180px;
-      animation: popCore 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 6.2s;
+      transform-origin: 300px 140px;
+      animation: bloomHeroHead 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.3s;
+    }
+
+    .hero-head-right {
+      transform: scale(0);
+      transform-origin: 450px 240px;
+      animation: bloomHeroHead 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.0s;
     }
 
     .hero-glow-pulse {
-      animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 7.5s;
+      animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 6.5s;
     }
 
     @keyframes growHeroLeaves { to { transform: scale(1); } }
     @keyframes growHeroStem { to { stroke-dashoffset: 0; } }
-    @keyframes bloomHeroPetals { to { transform: scale(1); } }
+    @keyframes bloomHeroHead { to { transform: scale(1); } }
     @keyframes pulseHeroGlow {
-      0% { filter: drop-shadow(0 0 15px rgba(255, 230, 0, 0.7)); }
-      100% { filter: drop-shadow(0 0 45px rgba(255, 255, 210, 0.98)); }
+      0% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)); }
+      100% { filter: drop-shadow(0 0 45px rgba(255, 235, 150, 0.98)); }
     }
   </style>
 </head>
@@ -410,7 +416,7 @@
         garden.style.opacity = "1";
 
         runCountdown([3, 2, 1], 0, () => {
-          spawnGrandTangledFlower();
+          spawnThreeSunflowersHero();
         });
       }, 2000);
     }
@@ -596,13 +602,13 @@
       emitSparkles(targetX, targetY, 14, false);
     }
 
-    /* 4. FLOR HÉROE DORADA TANGLED EN 3D */
-    function spawnGrandTangledFlower() {
+    /* 4. TRES GIRASOLES HÉROE EN 3D CON BRILLES Y SOLES DE ENREDADOS */
+    function spawnThreeSunflowersHero() {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
 
-      const fWidth = 400;
-      const fHeight = Math.min(height * 0.72, 580);
+      const fWidth = 600;
+      const fHeight = Math.min(height * 0.75, 620);
 
       svg.setAttribute("width", fWidth);
       svg.setAttribute("height", fHeight);
@@ -629,46 +635,45 @@
           <stop offset="100%" stop-color="#0f2613"/>
         </linearGradient>
 
-        <linearGradient id="goldPetal3D_1" x1="0.5" y1="1" x2="0.5" y2="0">
+        <linearGradient id="sfPetalGrad1" x1="0.5" y1="1" x2="0.5" y2="0">
           <stop offset="0%" stop-color="#d97700"/>
-          <stop offset="30%" stop-color="#ffae00"/>
-          <stop offset="75%" stop-color="#ffea66"/>
+          <stop offset="30%" stop-color="#ffb700"/>
+          <stop offset="80%" stop-color="#ffea66"/>
           <stop offset="100%" stop-color="#ffffff"/>
         </linearGradient>
 
-        <linearGradient id="goldPetal3D_2" x1="0.2" y1="1" x2="0.8" y2="0">
+        <linearGradient id="sfPetalGrad2" x1="0.2" y1="1" x2="0.8" y2="0">
           <stop offset="0%" stop-color="#b35900"/>
           <stop offset="40%" stop-color="#ffd700"/>
           <stop offset="85%" stop-color="#fff4b3"/>
           <stop offset="100%" stop-color="#ffffff"/>
         </linearGradient>
 
-        <radialGradient id="tangledInnerGlow" cx="50%" cy="60%" r="50%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
-          <stop offset="35%" stop-color="#ffb3ff" stop-opacity="0.85"/>
-          <stop offset="70%" stop-color="#d966ff" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#ffe600" stop-opacity="0"/>
+        <radialGradient id="sfCenterGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#663300"/>
+          <stop offset="60%" stop-color="#3d1a00"/>
+          <stop offset="90%" stop-color="#260f00"/>
+          <stop offset="100%" stop-color="#120600"/>
         </radialGradient>
 
         <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feGaussianBlur stdDeviation="5" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
       `;
       svg.appendChild(defs);
 
+      // Base de Hojas
       const baseLeaves = document.createElementNS(svgNS, "g");
       baseLeaves.setAttribute("class", "hero-base-leaves");
 
       const leavesData = [
-        `M 200 ${fHeight} Q 110 ${fHeight - 20} 50 ${fHeight - 5} Q 130 ${fHeight - 65} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 290 ${fHeight - 20} 350 ${fHeight - 5} Q 270 ${fHeight - 65} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 120 ${fHeight - 75} 80 ${fHeight - 65} Q 150 ${fHeight - 110} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 280 ${fHeight - 75} 320 ${fHeight - 65} Q 250 ${fHeight - 110} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 150 ${fHeight - 120} 120 ${fHeight - 130} Q 180 ${fHeight - 165} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 250 ${fHeight - 120} 280 ${fHeight - 130} Q 220 ${fHeight - 165} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 170 ${fHeight - 160} 155 ${fHeight - 180} Q 190 ${fHeight - 200} 200 ${fHeight}`,
-        `M 200 ${fHeight} Q 230 ${fHeight - 160} 245 ${fHeight - 180} Q 210 ${fHeight - 200} 200 ${fHeight}`
+        `M 300 ${fHeight} Q 180 ${fHeight - 20} 80 ${fHeight - 5} Q 200 ${fHeight - 70} 300 ${fHeight}`,
+        `M 300 ${fHeight} Q 420 ${fHeight - 20} 520 ${fHeight - 5} Q 400 ${fHeight - 70} 300 ${fHeight}`,
+        `M 300 ${fHeight} Q 190 ${fHeight - 90} 120 ${fHeight - 80} Q 220 ${fHeight - 130} 300 ${fHeight}`,
+        `M 300 ${fHeight} Q 410 ${fHeight - 90} 480 ${fHeight - 80} Q 380 ${fHeight - 130} 300 ${fHeight}`,
+        `M 300 ${fHeight} Q 220 ${fHeight - 140} 180 ${fHeight - 160} Q 260 ${fHeight - 190} 300 ${fHeight}`,
+        `M 300 ${fHeight} Q 380 ${fHeight - 140} 420 ${fHeight - 160} Q 340 ${fHeight - 190} 300 ${fHeight}`
       ];
 
       leavesData.forEach((d, idx) => {
@@ -679,105 +684,117 @@
         baseLeaves.appendChild(leaf);
       });
 
-      const stem = document.createElementNS(svgNS, "path");
-      stem.setAttribute("d", `M 200 ${fHeight} Q 175 ${fHeight * 0.55} 200 180`);
-      stem.setAttribute("stroke", "url(#heroStem3D)");
-      stem.setAttribute("stroke-width", "8");
-      stem.setAttribute("stroke-linecap", "round");
-      stem.setAttribute("fill", "none");
-      stem.setAttribute("class", "hero-stem");
-      stem.setAttribute("filter", "drop-shadow(0 2px 5px rgba(0,0,0,0.7))");
+      // 3 Tallos principales
+      const stemsGroup = document.createElementNS(svgNS, "g");
+      
+      const stemCentral = document.createElementNS(svgNS, "path");
+      stemCentral.setAttribute("d", `M 300 ${fHeight} Q 290 ${fHeight * 0.55} 300 140`);
+      stemCentral.setAttribute("stroke", "url(#heroStem3D)");
+      stemCentral.setAttribute("stroke-width", "9");
+      stemCentral.setAttribute("stroke-linecap", "round");
+      stemCentral.setAttribute("fill", "none");
+      stemCentral.setAttribute("class", "hero-stem");
+      stemCentral.setAttribute("filter", "drop-shadow(0 2px 5px rgba(0,0,0,0.7))");
 
-      const petalsGroup = document.createElementNS(svgNS, "g");
-      petalsGroup.setAttribute("class", "hero-petals-open hero-glow-pulse");
+      const stemLeft = document.createElementNS(svgNS, "path");
+      stemLeft.setAttribute("d", `M 300 ${fHeight} Q 210 ${fHeight * 0.6} 150 220`);
+      stemLeft.setAttribute("stroke", "url(#heroStem3D)");
+      stemLeft.setAttribute("stroke-width", "7.5");
+      stemLeft.setAttribute("stroke-linecap", "round");
+      stemLeft.setAttribute("fill", "none");
+      stemLeft.setAttribute("class", "hero-stem");
+      stemLeft.setAttribute("filter", "drop-shadow(0 2px 5px rgba(0,0,0,0.7))");
 
-      const petalAngles = [0, 60, 120, 180, 240, 300];
-      petalAngles.forEach((angle, idx) => {
-        const petal = document.createElementNS(svgNS, "path");
-        petal.setAttribute("d", "M 200 180 C 145 110 155 10 200 -15 C 245 10 255 110 200 180");
-        petal.setAttribute("fill", idx % 2 === 0 ? "url(#goldPetal3D_1)" : "url(#goldPetal3D_2)");
-        petal.setAttribute("transform", `rotate(${angle}, 200, 180)`);
-        petal.setAttribute("filter", "url(#goldGlow)");
-        petalsGroup.appendChild(petal);
+      const stemRight = document.createElementNS(svgNS, "path");
+      stemRight.setAttribute("d", `M 300 ${fHeight} Q 390 ${fHeight * 0.6} 450 240`);
+      stemRight.setAttribute("stroke", "url(#heroStem3D)");
+      stemRight.setAttribute("stroke-width", "7.5");
+      stemRight.setAttribute("stroke-linecap", "round");
+      stemRight.setAttribute("fill", "none");
+      stemRight.setAttribute("class", "hero-stem");
+      stemRight.setAttribute("filter", "drop-shadow(0 2px 5px rgba(0,0,0,0.7))");
 
-        const highlight = document.createElementNS(svgNS, "path");
-        highlight.setAttribute("d", "M 200 180 C 180 130 188 40 200 0 C 212 40 220 130 200 180");
-        highlight.setAttribute("fill", "url(#tangledInnerGlow)");
-        highlight.setAttribute("transform", `rotate(${angle}, 200, 180)`);
-        petalsGroup.appendChild(highlight);
-      });
+      stemsGroup.appendChild(stemLeft);
+      stemsGroup.appendChild(stemRight);
+      stemsGroup.appendChild(stemCentral);
 
-      const stamenGroup = document.createElementNS(svgNS, "g");
-      const stamenPaths = [
-        "M 200 180 Q 170 110 150 80",
-        "M 200 180 Q 185 100 175 60",
-        "M 200 180 Q 200 95 200 50",
-        "M 200 180 Q 215 100 225 60",
-        "M 200 180 Q 230 110 250 80"
-      ];
+      // Función creadora de Cabeza de Girasol
+      function createSunflowerHead(cx, cy, scale, classAnim) {
+        const headGroup = document.createElementNS(svgNS, "g");
+        headGroup.setAttribute("class", `${classAnim} hero-glow-pulse`);
 
-      stamenPaths.forEach(d => {
-        const stamen = document.createElementNS(svgNS, "path");
-        stamen.setAttribute("d", d);
-        stamen.setAttribute("stroke", "#ffffff");
-        stamen.setAttribute("stroke-width", "3");
-        stamen.setAttribute("fill", "none");
-        stamen.setAttribute("filter", "drop-shadow(0 0 8px #ffe600)");
-        stamenGroup.appendChild(stamen);
+        const petalsCount = 22;
+        for (let i = 0; i < petalsCount; i++) {
+          const angle = (360 / petalsCount) * i;
+          const petal = document.createElementNS(svgNS, "path");
+          petal.setAttribute("d", `M ${cx} ${cy} C ${cx - 16 * scale} ${cy - 35 * scale} ${cx - 12 * scale} ${cy - 85 * scale} ${cx} ${cy - 95 * scale} C ${cx + 12 * scale} ${cy - 85 * scale} ${cx + 16 * scale} ${cy - 35 * scale} ${cx} ${cy}`);
+          petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad1)" : "url(#sfPetalGrad2)");
+          petal.setAttribute("transform", `rotate(${angle}, ${cx}, ${cy})`);
+          petal.setAttribute("filter", "url(#goldGlow)");
+          headGroup.appendChild(petal);
+        }
 
-        const tipCoord = d.split(" ").pop().split(" ");
-        const tip = document.createElementNS(svgNS, "circle");
-        tip.setAttribute("cx", tipCoord[0]);
-        tip.setAttribute("cy", tipCoord[1]);
-        tip.setAttribute("r", "4.5");
-        tip.setAttribute("fill", "#ffffff");
-        tip.setAttribute("filter", "drop-shadow(0 0 10px #ffffff)");
-        stamenGroup.appendChild(tip);
-      });
+        const innerPetalsCount = 16;
+        for (let i = 0; i < innerPetalsCount; i++) {
+          const angle = (360 / innerPetalsCount) * i + 11;
+          const petal = document.createElementNS(svgNS, "path");
+          petal.setAttribute("d", `M ${cx} ${cy} C ${cx - 12 * scale} ${cy - 25 * scale} ${cx - 9 * scale} ${cy - 65 * scale} ${cx} ${cy - 72 * scale} C ${cx + 9 * scale} ${cy - 65 * scale} ${cx + 12 * scale} ${cy - 25 * scale} ${cx} ${cy}`);
+          petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad2)" : "url(#sfPetalGrad1)");
+          petal.setAttribute("transform", `rotate(${angle}, ${cx}, ${cy})`);
+          headGroup.appendChild(petal);
+        }
 
-      petalsGroup.appendChild(stamenGroup);
+        const centerCore = document.createElementNS(svgNS, "circle");
+        centerCore.setAttribute("cx", cx);
+        centerCore.setAttribute("cy", cy);
+        centerCore.setAttribute("r", 28 * scale);
+        centerCore.setAttribute("fill", "url(#sfCenterGrad)");
+        centerCore.setAttribute("stroke", "#ffd700");
+        centerCore.setAttribute("stroke-width", 2 * scale);
+        centerCore.setAttribute("filter", "drop-shadow(0 0 8px rgba(0,0,0,0.8))");
+        headGroup.appendChild(centerCore);
 
-      const heroCoreGroup = document.createElementNS(svgNS, "g");
-      heroCoreGroup.setAttribute("class", "hero-core-pop");
-      const coreCircle = document.createElementNS(svgNS, "circle");
-      coreCircle.setAttribute("cx", "200");
-      coreCircle.setAttribute("cy", "180");
-      coreCircle.setAttribute("r", "16");
-      coreCircle.setAttribute("fill", "#ffffff");
-      coreCircle.setAttribute("filter", "url(#goldGlow)");
-      heroCoreGroup.appendChild(coreCircle);
+        return headGroup;
+      }
+
+      const headLeft = createSunflowerHead(150, 220, 0.82, "hero-head-left");
+      const headCentral = createSunflowerHead(300, 140, 1.1, "hero-head-center");
+      const headRight = createSunflowerHead(450, 240, 0.78, "hero-head-right");
 
       svg.appendChild(baseLeaves);
-      svg.appendChild(stem);
-      svg.appendChild(petalsGroup);
-      svg.appendChild(heroCoreGroup);
+      svg.appendChild(stemsGroup);
+      svg.appendChild(headLeft);
+      svg.appendChild(headRight);
+      svg.appendChild(headCentral);
 
       garden.appendChild(svg);
 
+      // Efecto interactivo al tocar
       svg.addEventListener('click', (evt) => {
         evt.stopPropagation();
         const rect = svg.getBoundingClientRect();
-        emitSparkles(width / 2, rect.top + 180, 45, true);
+        emitTangledSparkles(width / 2, rect.top + 160, 50);
       });
 
+      // Emisiones automáticas de destellos y soles amarillos, blancos y morados
       setTimeout(() => {
         const rect = svg.getBoundingClientRect();
-        emitSparkles(width / 2, rect.top + 180, 85, true);
-      }, 7600);
+        emitTangledSparkles(width / 2, rect.top + 160, 90);
+      }, 6200);
 
       setTimeout(() => {
         finalMsg.style.opacity = "1";
-      }, 9200);
+      }, 7800);
     }
 
-    /* 5. EMISIÓN DE DESTELLOS */
+    /* 5. EMISIÓN DE DESTELLOS Y SOLES (AMARILLO, BLANCO Y MORADO) */
     function emitSparkles(centerX, centerY, count, includeSuns) {
       for (let i = 0; i < count; i++) {
         const isSun = includeSuns && Math.random() < 0.38;
         const randColor = Math.random();
-        let colorStr = "255, 215, 0";
-        if (randColor < 0.4) colorStr = "255, 255, 255";
-        else if (randColor < 0.55) colorStr = "225, 155, 255";
+        let colorStr = "255, 215, 0"; // Amarillo
+        if (randColor < 0.35) colorStr = "255, 255, 255"; // Blanco
+        else if (randColor < 0.65) colorStr = "215, 140, 255"; // Morado tipo Rapunzel
 
         particles.push({
           x: centerX + (Math.random() - 0.5) * 60,
@@ -792,6 +809,10 @@
           isSun: isSun
         });
       }
+    }
+
+    function emitTangledSparkles(centerX, centerY, count) {
+      emitSparkles(centerX, centerY, count, true);
     }
   </script>
 </body>
