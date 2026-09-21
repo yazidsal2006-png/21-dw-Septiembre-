@@ -166,7 +166,7 @@
       pointer-events: auto;
     }
 
-    /* Animación del Tallo creciendo desde abajo */
+    /* Animación del Tallo para flores secundarias */
     .stem-path {
       stroke-dasharray: 1200;
       stroke-dashoffset: 1200;
@@ -189,7 +189,7 @@
     @keyframes bloomPetals { to { transform: scale(1); } }
     @keyframes popCore { to { transform: scale(1); } }
 
-    /* TRES GIRASOLES FINALES HÉROE */
+    /* CONTENEDOR DE LOS TRES GIRASOLES HÉROE */
     .hero-container {
       position: absolute;
       left: 50%;
@@ -201,41 +201,51 @@
       cursor: pointer;
     }
 
+    /* 1. Crece la base de hojas y tallos primero */
     .hero-base-leaves {
       transform: scale(0);
       transform-origin: bottom center;
-      animation: growHeroLeaves 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: growHeroLeaves 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     .hero-stem {
       stroke-dasharray: 1200;
       stroke-dashoffset: 1200;
-      animation: growHeroStem 3.2s ease-out forwards 1.2s;
+      animation: growHeroStem 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.5s;
     }
 
-    /* Animaciones individuales para las 3 cabezas */
+    /* 2. Aparece el centro café del girasol */
+    .hero-center-core {
+      transform: scale(0);
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: popHeroCore 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.6s;
+    }
+
+    /* 3. Florecen los pétalos y comienza la rotación continua en su eje */
     .hero-head-left {
       transform-box: fill-box;
       transform-origin: center;
-      animation: bloomHeroLeft 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.8s, rotateHeroLeft 22s linear infinite 5.8s;
+      animation: bloomHeroLeft 1.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.3s, rotateHeroLeft 22s linear infinite 5.1s;
     }
 
     .hero-head-center {
       transform-box: fill-box;
       transform-origin: center;
-      animation: bloomHeroCenter 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.3s, rotateHeroCenter 25s linear infinite 6.5s;
+      animation: bloomHeroCenter 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.6s, rotateHeroCenter 25s linear infinite 5.6s;
     }
 
     .hero-head-right {
       transform-box: fill-box;
       transform-origin: center;
-      animation: bloomHeroRight 2.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.0s, rotateHeroRight 20s linear infinite 6.0s;
+      animation: bloomHeroRight 1.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 3.4s, rotateHeroRight 20s linear infinite 5.2s;
     }
 
     @keyframes growHeroLeaves { to { transform: scale(1); } }
     @keyframes growHeroStem { to { stroke-dashoffset: 0; } }
+    @keyframes popHeroCore { to { transform: scale(1); } }
 
-    /* Escalado de apertura según tamaño */
+    /* Apertura de Pétalos */
     @keyframes bloomHeroLeft {
       0% { transform: scale(0); }
       100% { transform: scale(0.85); }
@@ -249,7 +259,7 @@
       100% { transform: scale(0.80); }
     }
 
-    /* Rotación sobre su propio eje en sentido horario y antihorario */
+    /* Rotaciones Continuas individuales */
     @keyframes rotateHeroLeft {
       from { transform: scale(0.85) rotate(0deg); }
       to { transform: scale(0.85) rotate(360deg); }
@@ -264,7 +274,7 @@
     }
 
     .hero-glow-pulse {
-      animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 6.5s;
+      animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 5.5s;
     }
 
     @keyframes pulseHeroGlow {
@@ -394,7 +404,7 @@
     }
     drawBackground();
 
-    /* 2. LÓGICA DE INTERACCIÓN Y NAVEGACIÓN */
+    /* 2. NAVEGACIÓN Y EVENTOS */
     const startBtn = document.getElementById('startBtn');
     const textOverlay = document.getElementById('textOverlay');
     const hintText = document.getElementById('hintText');
@@ -464,7 +474,7 @@
       }, 1100);
     }
 
-    /* 3. GENERADOR DE FLORES INTERACTIVAS INICIALES */
+    /* 3. GENERADOR DE FLORES INTERACTIVAS */
     function spawnInteractiveFlower(targetX, targetY) {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
@@ -619,7 +629,7 @@
       emitSparkles(targetX, targetY, 14, false);
     }
 
-    /* 4. TRES GIRASOLES HÉROE CORREGIDOS Y ANIMADOS CON ROTACIÓN */
+    /* 4. TRES GIRASOLES HÉROE (PRIMERO TALLO, LUEGO CENTRO CAFÉ, LUEGO PÉTALOS Y ROTACIÓN) */
     function spawnThreeSunflowersHero() {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
@@ -735,10 +745,13 @@
       stemsGroup.appendChild(stemRight);
       stemsGroup.appendChild(stemCentral);
 
-      // Creador de Cabeza de Girasol Centrada
+      // Creador de Cabeza con separación: Centro café primero, Pétalos después
       function createSunflowerHead(classAnim) {
         const headGroup = document.createElementNS(svgNS, "g");
-        headGroup.setAttribute("class", `${classAnim} hero-glow-pulse`);
+
+        // Grupo de Pétalos que florece al final y rota
+        const petalsRotatingGroup = document.createElementNS(svgNS, "g");
+        petalsRotatingGroup.setAttribute("class", `${classAnim} hero-glow-pulse`);
 
         const petalsCount = 22;
         for (let i = 0; i < petalsCount; i++) {
@@ -748,7 +761,7 @@
           petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad1)" : "url(#sfPetalGrad2)");
           petal.setAttribute("transform", `rotate(${angle})`);
           petal.setAttribute("filter", "url(#goldGlow)");
-          headGroup.appendChild(petal);
+          petalsRotatingGroup.appendChild(petal);
         }
 
         const innerPetalsCount = 16;
@@ -758,8 +771,12 @@
           petal.setAttribute("d", "M 0 0 C -12 -25 -9 -65 0 -72 C 9 -65 12 -25 0 0");
           petal.setAttribute("fill", i % 2 === 0 ? "url(#sfPetalGrad2)" : "url(#sfPetalGrad1)");
           petal.setAttribute("transform", `rotate(${angle})`);
-          headGroup.appendChild(petal);
+          petalsRotatingGroup.appendChild(petal);
         }
+
+        // Centro café que aparece antes que los pétalos
+        const centerCoreGroup = document.createElementNS(svgNS, "g");
+        centerCoreGroup.setAttribute("class", "hero-center-core");
 
         const centerCore = document.createElementNS(svgNS, "circle");
         centerCore.setAttribute("cx", 0);
@@ -769,12 +786,15 @@
         centerCore.setAttribute("stroke", "#ffd700");
         centerCore.setAttribute("stroke-width", 2);
         centerCore.setAttribute("filter", "drop-shadow(0 0 8px rgba(0,0,0,0.8))");
-        headGroup.appendChild(centerCore);
+        centerCoreGroup.appendChild(centerCore);
+
+        headGroup.appendChild(petalsRotatingGroup);
+        headGroup.appendChild(centerCoreGroup);
 
         return headGroup;
       }
 
-      // Grupo envolvente para posicionamiento exacto
+      // Grupo envolvente para posicionamiento
       const posLeft = document.createElementNS(svgNS, "g");
       posLeft.setAttribute("transform", "translate(150, 220)");
       posLeft.appendChild(createSunflowerHead("hero-head-left"));
@@ -795,17 +815,14 @@
 
       garden.appendChild(svg);
 
-      // Coordenadas reales relativas en la pantalla para las partículas de los 3 girasoles
+      // Coordenadas para emitir destellos del sol de Enredados en los 3 girasoles
       function triggerAllSunflowersSparkles() {
         const rect = svg.getBoundingClientRect();
         const scaleX = rect.width / fWidth;
         const scaleY = rect.height / fHeight;
 
-        // Girasol Izquierdo
         emitTangledSparkles(rect.left + (150 * scaleX), rect.top + (220 * scaleY), 35);
-        // Girasol Central
         emitTangledSparkles(rect.left + (300 * scaleX), rect.top + (140 * scaleY), 45);
-        // Girasol Derecho
         emitTangledSparkles(rect.left + (450 * scaleX), rect.top + (240 * scaleY), 35);
       }
 
@@ -814,14 +831,14 @@
         triggerAllSunflowersSparkles();
       });
 
-      // Emisión automática para los 3 girasoles
+      // Emisión automática al abrirse los pétalos
       setTimeout(() => {
         triggerAllSunflowersSparkles();
-      }, 6200);
+      }, 5000);
 
       setTimeout(() => {
         finalMsg.style.opacity = "1";
-      }, 7800);
+      }, 6500);
     }
 
     /* 5. EMISIÓN DE DESTELLOS Y SOLES (AMARILLO, BLANCO Y MORADO) */
