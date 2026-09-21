@@ -3,223 +3,795 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Golden Flower Gift for Mitca</title>
+  <title>Para ti, Mitca 💛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-
-    body {
-      background-color: #050505;
-      color: #ffffff;
-      font-family: 'Georgia', serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      overflow-x: hidden;
-      padding: 20px 10px;
-    }
-
-    /* Contenedor de la lluvia de soles arriba */
-    .sun-rain-container {
+    body, html {
       width: 100%;
-      max-width: 400px;
-      height: 220px;
-      position: relative;
+      height: 100%;
+      overflow: hidden;
+      background-color: #030305;
+      font-family: 'Montserrat', sans-serif;
+      color: #ffffff;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #bgCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    #textOverlay {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: 90%;
+      max-width: 650px;
+      text-align: center;
+      padding: 30px;
+      opacity: 0;
+      animation: fadeIn 2s forwards 0.5s;
+    }
+
+    .letter-title {
+      font-family: 'Alex Brush', cursive;
+      font-size: 3.2rem;
+      color: #ffe600;
+      text-shadow: 0 0 15px rgba(255, 230, 0, 0.7), 0 0 30px rgba(255, 200, 0, 0.4);
+      margin-bottom: 22px;
+    }
+
+    .letter-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: #f0f0f5;
+      font-weight: 300;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .highlight {
+      color: #ffd700;
+      font-weight: 400;
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    }
+
+    #startBtn {
+      position: absolute;
+      bottom: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: rgba(20, 20, 25, 0.65);
+      border: 1px solid rgba(255, 230, 0, 0.6);
+      color: #ffe600;
+      padding: 14px 34px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.25);
+      transition: all 0.4s ease;
+      opacity: 0;
+      animation: fadeIn 2s forwards 3.5s;
+    }
+
+    #startBtn:hover {
+      background: rgba(255, 230, 0, 0.25);
+      box-shadow: 0 0 30px rgba(255, 230, 0, 0.6);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    #flowerGarden {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    #hintText {
+      position: absolute;
+      top: 30px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255, 230, 0, 0.85);
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      z-index: 15;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+    }
+
+    #countdownOverlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 30;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 7rem;
+      font-weight: 300;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 230, 0, 0.8);
+      opacity: 0;
       pointer-events: none;
     }
 
-    .sun-particle {
+    #finalMessage {
       position: absolute;
-      border-radius: 50%;
-      animation: floatSun ease-in-out infinite alternate;
-    }
-
-    @keyframes floatSun {
-      0% {
-        transform: translateY(0) scale(0.9);
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(-12px) scale(1.1);
-        opacity: 1;
-      }
-    }
-
-    /* Contenedor principal de la flor */
-    .flower-container {
-      width: 100%;
-      max-width: 420px;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      margin-top: -30px;
-    }
-
-    .golden-flower-svg {
-      width: 100%;
-      height: auto;
-      overflow: visible;
-    }
-
-    /* Resplandor y animación mágica de la flor */
-    .magic-flower {
-      animation: magicGlow 3.5s ease-in-out infinite alternate;
-      transform-origin: 250px 220px;
-    }
-
-    @keyframes magicGlow {
-      0% {
-        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8)) 
-                drop-shadow(0 0 25px rgba(255, 183, 3, 0.5));
-      }
-      100% {
-        filter: drop-shadow(0 0 22px rgba(255, 240, 160, 1)) 
-                drop-shadow(0 0 45px rgba(251, 133, 0, 0.85))
-                drop-shadow(0 0 65px rgba(224, 170, 255, 0.4));
-      }
-    }
-
-    /* Texto inferior intacto */
-    .footer-text {
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
       text-align: center;
-      font-style: italic;
-      font-size: 1.25rem;
-      line-height: 1.6;
-      color: #f0f0f0;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6),
-                   0 0 20px rgba(255, 215, 0, 0.4);
-      margin-top: -60px;
-      margin-bottom: 20px;
-      z-index: 10;
+      width: 90%;
+      max-width: 650px;
+      opacity: 0;
+      transition: opacity 2.5s ease;
+      pointer-events: none;
     }
 
-    .heart-icon {
-      display: inline-block;
+    .final-text {
+      font-family: 'Alex Brush', cursive;
+      font-size: 2.3rem;
       color: #ffffff;
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
-      margin-left: 4px;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 215, 0, 0.85);
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; } }
+
+    /* SVG Contenedor de cada flor interactiva */
+    .flower-svg {
+      position: absolute;
+      overflow: visible;
+      pointer-events: auto;
+    }
+
+    /* Animación del Tallo creciendo desde abajo */
+    .stem-path {
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: growStem 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    /* ORDEN DE APARICIÓN CORREGIDO: */
+    /* 1. PRIMERO APARECEN LOS PÉTALOS (a los 1.4s cuando termina de crecer el tallo) */
+    .petals-blooming-group {
+      transform: scale(0);
+      transform-origin: center;
+      animation: bloomPetals 1.0s cubic-bezier(0.34, 1.25, 0.64, 1) forwards 1.4s;
+    }
+
+    /* 2. LUEGO APARECE LA PARTE CAFECITA / CENTRO DE LA FLOR (a los 2.2s, después de los pétalos) */
+    .flower-core {
+      transform: scale(0);
+      transform-origin: center;
+      animation: popCore 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.2s;
+    }
+
+    @keyframes growStem { to { stroke-dashoffset: 0; } }
+    @keyframes bloomPetals { to { transform: scale(1); } }
+    @keyframes popCore { to { transform: scale(1); } }
+
+    /* FLOR HÉROE (LIRIO DORADO TANGLED EN 3D) */
+    .hero-container {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      z-index: 25;
+      overflow: visible;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .hero-base-leaves {
+      transform: scale(0);
+      transform-origin: bottom center;
+      animation: growHeroLeaves 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .hero-stem {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: growHeroStem 3.2s ease-out forwards 1.5s;
+    }
+
+    .hero-petals-open {
+      transform: scale(0);
+      transform-origin: 200px 180px;
+      animation: bloomHeroPetals 2.2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards 4.5s;
+    }
+
+    .hero-core-pop {
+      transform: scale(0);
+      transform-origin: 200px 180px;
+      animation: popCore 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 6.2s;
+    }
+
+    .hero-glow-pulse {
+      animation: pulseHeroGlow 3.5s infinite alternate ease-in-out 7.5s;
+    }
+
+    @keyframes growHeroLeaves { to { transform: scale(1); } }
+    @keyframes growHeroStem { to { stroke-dashoffset: 0; } }
+    @keyframes bloomHeroPetals { to { transform: scale(1); } }
+    @keyframes pulseHeroGlow {
+      0% { filter: drop-shadow(0 0 15px rgba(255, 230, 0, 0.7)); }
+      100% { filter: drop-shadow(0 0 45px rgba(255, 255, 210, 0.98)); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Lluvia de soles (amarillo, blanco, morado) intacta -->
-  <div class="sun-rain-container" id="sunContainer"></div>
+  <canvas id="bgCanvas"></canvas>
 
-  <!-- Flor Principal de Enredados de Alta Calidad -->
-  <div class="flower-container">
-    <svg viewBox="0 0 500 750" class="golden-flower-svg">
-      <defs>
-        <!-- Filtro de resplandor para los pétalos y centro -->
-        <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#FFFFFF" />
-          <stop offset="25%" stop-color="#FFF3a1" />
-          <stop offset="65%" stop-color="#FFB703" />
-          <stop offset="100%" stop-color="#FB8500" />
-        </radialGradient>
-
-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="40%">
-          <stop offset="0%" stop-color="#FFFFFF" />
-          <stop offset="45%" stop-color="#F72585" />
-          <stop offset="85%" stop-color="#7209B7" />
-          <stop offset="100%" stop-color="#3A0CA3" />
-        </radialGradient>
-
-        <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#0B2B18" />
-          <stop offset="50%" stop-color="#1B4332" />
-          <stop offset="100%" stop-color="#2D6A4F" />
-        </linearGradient>
-
-        <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#52B788" />
-          <stop offset="50%" stop-color="#2D6A4F" />
-          <stop offset="100%" stop-color="#081C15" />
-        </linearGradient>
-      </defs>
-
-      <!-- Base Vegetal Orgánica (Hojas Realistas) -->
-      <g class="leaf-base">
-        <path d="M 250 720 C 170 710, 90 650, 40 600 C 100 590, 190 640, 250 720 Z" fill="url(#leafGrad)" />
-        <path d="M 250 720 C 330 710, 410 650, 460 600 C 400 590, 310 640, 250 720 Z" fill="url(#leafGrad)" />
-        <path d="M 250 720 C 140 680, 70 560, 90 500 C 150 530, 210 620, 250 720 Z" fill="url(#leafGrad)" opacity="0.95" />
-        <path d="M 250 720 C 360 680, 430 560, 410 500 C 350 530, 290 620, 250 720 Z" fill="url(#leafGrad)" opacity="0.95" />
-        <path d="M 250 720 C 180 640, 140 520, 170 450 C 210 490, 230 580, 250 720 Z" fill="url(#leafGrad)" opacity="0.85" />
-        <path d="M 250 720 C 320 640, 360 520, 330 450 C 290 490, 270 580, 250 720 Z" fill="url(#leafGrad)" opacity="0.85" />
-      </g>
-
-      <!-- Tallo Curvado Orgánico con Grosor Realista -->
-      <path d="M 250 720 Q 230 520 255 380 T 250 220" fill="none" stroke="url(#stemGrad)" stroke-width="10" stroke-linecap="round" />
-
-      <!-- Hojas a lo largo del tallo -->
-      <path d="M 248 480 Q 180 450 160 410 Q 210 420 250 460 Z" fill="url(#leafGrad)" />
-      <path d="M 253 380 Q 320 350 340 310 Q 290 320 251 360 Z" fill="url(#leafGrad)" />
-
-      <!-- Flor Dorada Mágica de Enredados -->
-      <g class="magic-flower">
-        <!-- Pétalos Traseros -->
-        <path d="M 250 220 C 180 170, 110 160, 90 190 C 120 220, 190 230, 250 220 Z" fill="url(#petalGrad)" />
-        <path d="M 250 220 C 320 170, 390 160, 410 190 C 380 220, 310 230, 250 220 Z" fill="url(#petalGrad)" />
-        <path d="M 250 220 C 170 120, 180 40, 220 30 C 240 80, 245 150, 250 220 Z" fill="url(#petalGrad)" />
-        <path d="M 250 220 C 330 120, 320 40, 280 30 C 260 80, 255 150, 250 220 Z" fill="url(#petalGrad)" />
-
-        <!-- Pétalos Principales Estilo Azucena / Lirio Dorado -->
-        <path d="M 250 220 Q 140 160 120 90 Q 200 130 250 220 Z" fill="url(#petalGrad)" />
-        <path d="M 250 220 Q 360 160 380 90 Q 300 130 250 220 Z" fill="url(#petalGrad)" />
-        <path d="M 250 220 Q 250 80 250 50 Q 270 130 250 220 Z" fill="url(#petalGrad)" />
-
-        <!-- Centro Mágico Místico -->
-        <circle cx="250" cy="205" r="22" fill="url(#centerGlow)" />
-
-        <!-- Pistilos Curvos con Puntas Brillantes -->
-        <path d="M 250 205 Q 220 140 195 90 Q 205 85 215 95" fill="none" stroke="#FFF8D6" stroke-width="3" stroke-linecap="round" />
-        <path d="M 250 205 Q 280 140 305 90 Q 295 85 285 95" fill="none" stroke="#FFF8D6" stroke-width="3" stroke-linecap="round" />
-        <path d="M 250 205 Q 250 120 250 70" fill="none" stroke="#FFE45E" stroke-width="3.5" stroke-linecap="round" />
-        
-        <circle cx="250" cy="65" r="6" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
-        <circle cx="195" cy="85" r="5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
-        <circle cx="305" cy="85" r="5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FFF)" />
-      </g>
-    </svg>
+  <div id="textOverlay">
+    <div class="letter-title">Para ti, Mitca</div>
+    <div class="letter-body">
+      El 21 de septiembre se regalan flores amarillas por la llegada de la primavera, simbolizando un amor sincero, un afecto profundo y la hermosa ilusión de caminar juntos.<br><br>
+      Por la distancia, hoy no puedo entregártelas en tus manos; pero <span class="highlight">a pesar de la lejanía</span>, nada me impedirá enviarte este detalle preparado con todo el corazón.<br><br>
+      Esto es para ti.
+    </div>
   </div>
 
-  <!-- Texto Inferior Dedicado Manteniendo el Formato -->
-  <div class="footer-text">
-    Con cariño de Yazid, ¿para quién más? Si solo para ti, Mitca. <span class="heart-icon">♥</span>
+  <button id="startBtn">Ver mi regalo 🌻</button>
+  <div id="hintText">Toca la pantalla para hacer florecer el jardín (0/13)</div>
+  <div id="countdownOverlay">3</div>
+
+  <div id="flowerGarden"></div>
+
+  <div id="finalMessage">
+    <div class="final-text">Con cariño de Yazid, ¿para quién más? Si solo para ti, Mitca. 🤍</div>
   </div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://ia800902.us.archive.org/27/items/HillsongUnitedPrinceOfPeace/PrinceOfPeace.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
-    // Generación dinámica de la lluvia de soles arriba (Amarillo, Blanco, Morado)
-    const container = document.getElementById('sunContainer');
-    const colors = ['#FFD700', '#FFFFFF', '#D8B4FE', '#FFEA79'];
-    const totalSuns = 22;
+    /* 1. CANVAS DE FONDO CON PARTÍCULAS Y SOLES DE ENREDADOS */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
-    for (let i = 0; i < totalSuns; i++) {
-      const sun = document.createElement('div');
-      sun.className = 'sun-particle';
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    let step = 0;
+    let particles = [];
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, width, height);
+
+      let bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#020204');
+      bgGrad.addColorStop(1, '#080712');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        for (let x = 0; x <= width; x += 30) {
+          let y = Math.sin((x * 0.0018) + (step * 0.012) + (i * 2)) * 25 + 
+                  Math.cos((x * 0.0009) + (step * 0.008)) * 15 + 
+                  (height * (0.78 + i * 0.06));
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        let waveGrad = ctx.createLinearGradient(0, 0, width, 0);
+        waveGrad.addColorStop(0, `rgba(25, 20, 10, ${0.12 - i * 0.03})`);
+        waveGrad.addColorStop(0.5, `rgba(45, 38, 15, ${0.18 - i * 0.04})`);
+        waveGrad.addColorStop(1, `rgba(20, 15, 8, ${0.12 - i * 0.03})`);
+        ctx.fillStyle = waveGrad;
+        ctx.fill();
+      }
+
+      particles.forEach((p, index) => {
+        p.y += p.speedY;
+        p.x += Math.sin(step * 0.02 + p.seed) * p.floatX;
+        p.alpha -= p.decay;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+
+        if (p.isSun) {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = `rgba(${p.color}, ${p.alpha * 0.8})`;
+          ctx.fill();
+
+          const rays = 8;
+          for (let r = 0; r < rays; r++) {
+            let angle = (Math.PI * 2 / rays) * r;
+            ctx.save();
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.moveTo(0, -p.size);
+            ctx.quadraticCurveTo(p.size * 0.8, -p.size * 1.8, 0, -p.size * 2.3);
+            ctx.quadraticCurveTo(-p.size * 0.4, -p.size * 1.6, 0, -p.size);
+            ctx.fillStyle = `rgba(${p.color}, ${p.alpha * 0.9})`;
+            ctx.fill();
+            ctx.restore();
+          }
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = `rgba(${p.color}, 0.9)`;
+          ctx.fill();
+        }
+
+        ctx.restore();
+
+        if (p.alpha <= 0 || p.y < -30 || p.y > height + 30) {
+          particles.splice(index, 1);
+        }
+      });
+
+      step += 1;
+      requestAnimationFrame(drawBackground);
+    }
+    drawBackground();
+
+    /* 2. LÓGICA DE INTERACCIÓN Y NAVEGACIÓN */
+    const startBtn = document.getElementById('startBtn');
+    const textOverlay = document.getElementById('textOverlay');
+    const hintText = document.getElementById('hintText');
+    const bgMusic = document.getElementById('bgMusic');
+    const garden = document.getElementById('flowerGarden');
+    const countdown = document.getElementById('countdownOverlay');
+    const finalMsg = document.getElementById('finalMessage');
+
+    let flowerCount = 0;
+    const MAX_FLOWERS = 13;
+
+    startBtn.addEventListener('click', () => {
+      bgMusic.volume = 0.45;
+      bgMusic.play().catch(() => {});
+
+      textOverlay.style.animation = "fadeOut 1.2s forwards";
+      startBtn.style.animation = "fadeOut 1.2s forwards";
+
+      setTimeout(() => {
+        textOverlay.style.display = "none";
+        startBtn.style.display = "none";
+        hintText.style.opacity = "1";
+      }, 1200);
+    });
+
+    garden.addEventListener('click', (e) => {
+      if (textOverlay.style.display === "none" && flowerCount < MAX_FLOWERS) {
+        flowerCount++;
+        hintText.innerText = `Toca la pantalla para hacer florecer el jardín (${flowerCount}/${MAX_FLOWERS})`;
+        spawnInteractiveFlower(e.clientX, e.clientY);
+
+        if (flowerCount === MAX_FLOWERS) {
+          hintText.style.opacity = "0";
+          setTimeout(startTransformationSequence, 3200);
+        }
+      }
+    });
+
+    function startTransformationSequence() {
+      garden.style.transition = "opacity 2s ease";
+      garden.style.opacity = "0";
+
+      setTimeout(() => {
+        garden.innerHTML = "";
+        garden.style.opacity = "1";
+
+        runCountdown([3, 2, 1], 0, () => {
+          spawnGrandTangledFlower();
+        });
+      }, 2000);
+    }
+
+    function runCountdown(numbers, index, onComplete) {
+      if (index >= numbers.length) {
+        countdown.style.opacity = "0";
+        onComplete();
+        return;
+      }
+      countdown.innerText = numbers[index];
+      countdown.style.opacity = "1";
+      countdown.style.animation = "none";
+      void countdown.offsetWidth;
+      countdown.style.animation = "fadeIn 0.3s forwards, fadeOut 0.5s forwards 0.8s";
+
+      setTimeout(() => {
+        runCountdown(numbers, index + 1, onComplete);
+      }, 1100);
+    }
+
+    /* 3. GENERADOR DE FLORES CORREGIDO Y MEJORADO */
+    function spawnInteractiveFlower(targetX, targetY) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+
+      const stemHeight = height - targetY;
+      const fWidth = 240;
+
+      // ESCALA SEGÚN ALTURA: Entre más alto toque, más grande es la flor.
+      const heightRatio = 1 - (targetY / height);
+      const flowerScale = 0.65 + (heightRatio * 0.70); 
+
+      svg.setAttribute("class", "flower-svg");
+      svg.setAttribute("width", fWidth);
+      svg.setAttribute("height", stemHeight);
+      svg.style.left = `${targetX - fWidth/2}px`;
+      svg.style.top = `${targetY}px`;
+
+      // Tallo EXACTO
+      const stem = document.createElementNS(svgNS, "path");
+      const curveX = (Math.random() - 0.5) * 35;
+      stem.setAttribute("d", `M ${fWidth/2} ${stemHeight} Q ${fWidth/2 + curveX} ${stemHeight * 0.5} ${fWidth/2} 35`);
+      stem.setAttribute("stroke", "#3e6b43");
+      stem.setAttribute("stroke-width", "4.5");
+      stem.setAttribute("stroke-linecap", "round");
+      stem.setAttribute("fill", "none");
+      stem.setAttribute("class", "stem-path");
+      svg.appendChild(stem);
+
+      // Hojas del tallo EXACTAS
+      const leafGroup = document.createElementNS(svgNS, "g");
       
-      const size = Math.random() * 14 + 10;
-      const posX = Math.random() * 80 + 10;
-      const posY = Math.random() * 180 + 10;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const duration = Math.random() * 2 + 2;
-      const delay = Math.random() * 2;
+      const leaf1 = document.createElementNS(svgNS, "path");
+      leaf1.setAttribute("d", `M ${fWidth/2} ${stemHeight*0.65} Q ${fWidth/2 - 25} ${stemHeight*0.65 - 15} ${fWidth/2 - 35} ${stemHeight*0.65 - 5} Q ${fWidth/2 - 15} ${stemHeight*0.65 + 15} ${fWidth/2} ${stemHeight*0.65}`);
+      leaf1.setAttribute("fill", "#2d5232");
+      
+      const leaf2 = document.createElementNS(svgNS, "path");
+      leaf2.setAttribute("d", `M ${fWidth/2} ${stemHeight*0.45} Q ${fWidth/2 + 25} ${stemHeight*0.45 - 15} ${fWidth/2 + 35} ${stemHeight*0.45 - 5} Q ${fWidth/2 + 15} ${stemHeight*0.45 + 15} ${fWidth/2} ${stemHeight*0.45}`);
+      leaf2.setAttribute("fill", "#2d5232");
 
-      sun.style.width = `${size}px`;
-      sun.style.height = `${size}px`;
-      sun.style.left = `${posX}%`;
-      sun.style.top = `${posY}px`;
-      sun.style.backgroundColor = color;
-      sun.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
-      sun.style.animationDuration = `${duration}s`;
-      sun.style.animationDelay = `${delay}s`;
+      leafGroup.appendChild(leaf1);
+      leafGroup.appendChild(leaf2);
+      svg.appendChild(leafGroup);
 
-      container.appendChild(sun);
+      // CABEZA DE LA FLOR CON ESCALA DE ALTURA
+      const flowerHeadGroup = document.createElementNS(svgNS, "g");
+      flowerHeadGroup.setAttribute("transform", `translate(${fWidth/2}, 35) scale(${flowerScale.toFixed(2)})`);
+
+      const flowerType = Math.floor(Math.random() * 5);
+
+      const petalsGroup = document.createElementNS(svgNS, "g");
+      petalsGroup.setAttribute("class", "petals-blooming-group");
+
+      const coreGroup = document.createElementNS(svgNS, "g");
+      coreGroup.setAttribute("class", "flower-core");
+
+      if (flowerType === 0) {
+        // GIRASOL REALISTA
+        const petals = 18;
+        for (let i = 0; i < petals; i++) {
+          const angle = (360 / petals) * i;
+          const p = document.createElementNS(svgNS, "path");
+          p.setAttribute("d", "M 0 0 C -7 -18 -5 -40 0 -46 C 5 -40 7 -18 0 0");
+          p.setAttribute("fill", i % 2 === 0 ? "#ffd700" : "#ffa800");
+          p.setAttribute("transform", `rotate(${angle})`);
+          petalsGroup.appendChild(p);
+        }
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "13");
+        center.setAttribute("fill", "#3d2109");
+        center.setAttribute("stroke", "#2b1605");
+        center.setAttribute("stroke-width", "1.5");
+        coreGroup.appendChild(center);
+
+      } else if (flowerType === 1) {
+        // TULIPÁN AMARILLO
+        const t1 = document.createElementNS(svgNS, "path");
+        t1.setAttribute("d", "M 0 0 C -26 -20 -22 -50 0 -54 C 22 -50 26 -20 0 0");
+        t1.setAttribute("fill", "#ffcc00");
+        
+        const t2 = document.createElementNS(svgNS, "path");
+        t2.setAttribute("d", "M 0 0 C -32 -15 -28 -44 -10 -50 C -6 -20 -6 -10 0 0");
+        t2.setAttribute("fill", "#ffa000");
+
+        const t3 = document.createElementNS(svgNS, "path");
+        t3.setAttribute("d", "M 0 0 C 32 -15 28 -44 10 -50 C 6 -20 6 -10 0 0");
+        t3.setAttribute("fill", "#ffe14d");
+
+        petalsGroup.appendChild(t2);
+        petalsGroup.appendChild(t3);
+        petalsGroup.appendChild(t1);
+
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "6");
+        center.setAttribute("cy", "-12");
+        center.setAttribute("fill", "#e68a00");
+        coreGroup.appendChild(center);
+
+      } else if (flowerType === 2) {
+        // MARGARITA SILVESTRE DOBLE
+        const petals = 14;
+        for (let i = 0; i < petals; i++) {
+          const angle = (360 / petals) * i;
+          const p = document.createElementNS(svgNS, "path");
+          p.setAttribute("d", "M 0 0 C -6 -15 -4 -35 0 -40 C 4 -35 6 -15 0 0");
+          p.setAttribute("fill", i % 2 === 0 ? "#ffee77" : "#ffcc00");
+          p.setAttribute("transform", `rotate(${angle})`);
+          petalsGroup.appendChild(p);
+        }
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "10");
+        center.setAttribute("fill", "#e67300");
+        coreGroup.appendChild(center);
+
+      } else if (flowerType === 3) {
+        // ROSA AMARILLA MULTICAPA
+        const layer1 = document.createElementNS(svgNS, "path");
+        layer1.setAttribute("d", "M 0 0 C -35 -20 -30 -45 0 -48 C 30 -45 35 -20 0 0");
+        layer1.setAttribute("fill", "#ffae00");
+
+        const layer2 = document.createElementNS(svgNS, "path");
+        layer2.setAttribute("d", "M 0 0 C -25 -15 -22 -38 0 -42 C 22 -38 25 -15 0 0");
+        layer2.setAttribute("fill", "#ffd700");
+
+        const layer3 = document.createElementNS(svgNS, "path");
+        layer3.setAttribute("d", "M 0 0 C -18 -10 -15 -28 0 -32 C 15 -28 18 -10 0 0");
+        layer3.setAttribute("fill", "#ffea66");
+
+        petalsGroup.appendChild(layer1);
+        petalsGroup.appendChild(layer2);
+        petalsGroup.appendChild(layer3);
+
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "7");
+        center.setAttribute("cy", "-10");
+        center.setAttribute("fill", "#d96600");
+        coreGroup.appendChild(center);
+
+      } else {
+        // LIRIO DORADO ELEGANTE
+        const petals = 6;
+        for (let i = 0; i < petals; i++) {
+          const angle = (360 / petals) * i;
+          const p = document.createElementNS(svgNS, "path");
+          p.setAttribute("d", "M 0 0 C -13 -18 -12 -42 0 -50 C 12 -42 13 -18 0 0");
+          p.setAttribute("fill", "#ffe600");
+          p.setAttribute("transform", `rotate(${angle})`);
+          petalsGroup.appendChild(p);
+        }
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "8");
+        center.setAttribute("fill", "#ffffff");
+        coreGroup.appendChild(center);
+      }
+
+      flowerHeadGroup.appendChild(petalsGroup);
+      flowerHeadGroup.appendChild(coreGroup);
+      svg.appendChild(flowerHeadGroup);
+
+      garden.appendChild(svg);
+
+      emitSparkles(targetX, targetY, 14, false);
+    }
+
+    /* 4. FLOR HÉROE DORADA TANGLED EN 3D */
+    function spawnGrandTangledFlower() {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+
+      const fWidth = 400;
+      const fHeight = Math.min(height * 0.72, 580);
+
+      svg.setAttribute("width", fWidth);
+      svg.setAttribute("height", fHeight);
+      svg.setAttribute("class", "hero-container");
+
+      const defs = document.createElementNS(svgNS, "defs");
+      defs.innerHTML = `
+        <linearGradient id="heroLeafGrad1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4c8a55"/>
+          <stop offset="50%" stop-color="#2a5431"/>
+          <stop offset="100%" stop-color="#0e2412"/>
+        </linearGradient>
+
+        <linearGradient id="heroLeafGrad2" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5ca367"/>
+          <stop offset="60%" stop-color="#1e4224"/>
+          <stop offset="100%" stop-color="#08170b"/>
+        </linearGradient>
+
+        <linearGradient id="heroStem3D" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1b3d20"/>
+          <stop offset="35%" stop-color="#55995e"/>
+          <stop offset="70%" stop-color="#2d5e34"/>
+          <stop offset="100%" stop-color="#0f2613"/>
+        </linearGradient>
+
+        <linearGradient id="goldPetal3D_1" x1="0.5" y1="1" x2="0.5" y2="0">
+          <stop offset="0%" stop-color="#d97700"/>
+          <stop offset="30%" stop-color="#ffae00"/>
+          <stop offset="75%" stop-color="#ffea66"/>
+          <stop offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+
+        <linearGradient id="goldPetal3D_2" x1="0.2" y1="1" x2="0.8" y2="0">
+          <stop offset="0%" stop-color="#b35900"/>
+          <stop offset="40%" stop-color="#ffd700"/>
+          <stop offset="85%" stop-color="#fff4b3"/>
+          <stop offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+
+        <radialGradient id="tangledInnerGlow" cx="50%" cy="60%" r="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+          <stop offset="35%" stop-color="#ffb3ff" stop-opacity="0.85"/>
+          <stop offset="70%" stop-color="#d966ff" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#ffe600" stop-opacity="0"/>
+        </radialGradient>
+
+        <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      `;
+      svg.appendChild(defs);
+
+      const baseLeaves = document.createElementNS(svgNS, "g");
+      baseLeaves.setAttribute("class", "hero-base-leaves");
+
+      const leavesData = [
+        `M 200 ${fHeight} Q 110 ${fHeight - 20} 50 ${fHeight - 5} Q 130 ${fHeight - 65} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 290 ${fHeight - 20} 350 ${fHeight - 5} Q 270 ${fHeight - 65} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 120 ${fHeight - 75} 80 ${fHeight - 65} Q 150 ${fHeight - 110} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 280 ${fHeight - 75} 320 ${fHeight - 65} Q 250 ${fHeight - 110} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 150 ${fHeight - 120} 120 ${fHeight - 130} Q 180 ${fHeight - 165} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 250 ${fHeight - 120} 280 ${fHeight - 130} Q 220 ${fHeight - 165} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 170 ${fHeight - 160} 155 ${fHeight - 180} Q 190 ${fHeight - 200} 200 ${fHeight}`,
+        `M 200 ${fHeight} Q 230 ${fHeight - 160} 245 ${fHeight - 180} Q 210 ${fHeight - 200} 200 ${fHeight}`
+      ];
+
+      leavesData.forEach((d, idx) => {
+        const leaf = document.createElementNS(svgNS, "path");
+        leaf.setAttribute("d", d);
+        leaf.setAttribute("fill", idx % 2 === 0 ? "url(#heroLeafGrad1)" : "url(#heroLeafGrad2)");
+        leaf.setAttribute("filter", "drop-shadow(0 3px 6px rgba(0,0,0,0.8))");
+        baseLeaves.appendChild(leaf);
+      });
+
+      const stem = document.createElementNS(svgNS, "path");
+      stem.setAttribute("d", `M 200 ${fHeight} Q 175 ${fHeight * 0.55} 200 180`);
+      stem.setAttribute("stroke", "url(#heroStem3D)");
+      stem.setAttribute("stroke-width", "8");
+      stem.setAttribute("stroke-linecap", "round");
+      stem.setAttribute("fill", "none");
+      stem.setAttribute("class", "hero-stem");
+      stem.setAttribute("filter", "drop-shadow(0 2px 5px rgba(0,0,0,0.7))");
+
+      const petalsGroup = document.createElementNS(svgNS, "g");
+      petalsGroup.setAttribute("class", "hero-petals-open hero-glow-pulse");
+
+      const petalAngles = [0, 60, 120, 180, 240, 300];
+      petalAngles.forEach((angle, idx) => {
+        const petal = document.createElementNS(svgNS, "path");
+        petal.setAttribute("d", "M 200 180 C 145 110 155 10 200 -15 C 245 10 255 110 200 180");
+        petal.setAttribute("fill", idx % 2 === 0 ? "url(#goldPetal3D_1)" : "url(#goldPetal3D_2)");
+        petal.setAttribute("transform", `rotate(${angle}, 200, 180)`);
+        petal.setAttribute("filter", "url(#goldGlow)");
+        petalsGroup.appendChild(petal);
+
+        const highlight = document.createElementNS(svgNS, "path");
+        highlight.setAttribute("d", "M 200 180 C 180 130 188 40 200 0 C 212 40 220 130 200 180");
+        highlight.setAttribute("fill", "url(#tangledInnerGlow)");
+        highlight.setAttribute("transform", `rotate(${angle}, 200, 180)`);
+        petalsGroup.appendChild(highlight);
+      });
+
+      const stamenGroup = document.createElementNS(svgNS, "g");
+      const stamenPaths = [
+        "M 200 180 Q 170 110 150 80",
+        "M 200 180 Q 185 100 175 60",
+        "M 200 180 Q 200 95 200 50",
+        "M 200 180 Q 215 100 225 60",
+        "M 200 180 Q 230 110 250 80"
+      ];
+
+      stamenPaths.forEach(d => {
+        const stamen = document.createElementNS(svgNS, "path");
+        stamen.setAttribute("d", d);
+        stamen.setAttribute("stroke", "#ffffff");
+        stamen.setAttribute("stroke-width", "3");
+        stamen.setAttribute("fill", "none");
+        stamen.setAttribute("filter", "drop-shadow(0 0 8px #ffe600)");
+        stamenGroup.appendChild(stamen);
+
+        const tipCoord = d.split(" ").pop().split(" ");
+        const tip = document.createElementNS(svgNS, "circle");
+        tip.setAttribute("cx", tipCoord[0]);
+        tip.setAttribute("cy", tipCoord[1]);
+        tip.setAttribute("r", "4.5");
+        tip.setAttribute("fill", "#ffffff");
+        tip.setAttribute("filter", "drop-shadow(0 0 10px #ffffff)");
+        stamenGroup.appendChild(tip);
+      });
+
+      petalsGroup.appendChild(stamenGroup);
+
+      const heroCoreGroup = document.createElementNS(svgNS, "g");
+      heroCoreGroup.setAttribute("class", "hero-core-pop");
+      const coreCircle = document.createElementNS(svgNS, "circle");
+      coreCircle.setAttribute("cx", "200");
+      coreCircle.setAttribute("cy", "180");
+      coreCircle.setAttribute("r", "16");
+      coreCircle.setAttribute("fill", "#ffffff");
+      coreCircle.setAttribute("filter", "url(#goldGlow)");
+      heroCoreGroup.appendChild(coreCircle);
+
+      svg.appendChild(baseLeaves);
+      svg.appendChild(stem);
+      svg.appendChild(petalsGroup);
+      svg.appendChild(heroCoreGroup);
+
+      garden.appendChild(svg);
+
+      svg.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        const rect = svg.getBoundingClientRect();
+        emitSparkles(width / 2, rect.top + 180, 45, true);
+      });
+
+      setTimeout(() => {
+        const rect = svg.getBoundingClientRect();
+        emitSparkles(width / 2, rect.top + 180, 85, true);
+      }, 7600);
+
+      setTimeout(() => {
+        finalMsg.style.opacity = "1";
+      }, 9200);
+    }
+
+    /* 5. EMISIÓN DE DESTELLOS */
+    function emitSparkles(centerX, centerY, count, includeSuns) {
+      for (let i = 0; i < count; i++) {
+        const isSun = includeSuns && Math.random() < 0.38;
+        const randColor = Math.random();
+        let colorStr = "255, 215, 0";
+        if (randColor < 0.4) colorStr = "255, 255, 255";
+        else if (randColor < 0.55) colorStr = "225, 155, 255";
+
+        particles.push({
+          x: centerX + (Math.random() - 0.5) * 60,
+          y: centerY + (Math.random() - 0.5) * 40,
+          size: isSun ? (Math.random() * 4 + 5) : (Math.random() * 3 + 1.5),
+          color: colorStr,
+          speedY: -(Math.random() * 2.8 + 0.8),
+          floatX: Math.random() * 0.8 + 0.2,
+          alpha: 1,
+          decay: Math.random() * 0.003 + 0.0015,
+          seed: Math.random() * 100,
+          isSun: isSun
+        });
+      }
     }
   </script>
 </body>
