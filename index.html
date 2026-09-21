@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para ti, Mitca 💛</title>
+  <!-- Fuente elegante manuscrita y de lectura -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Estilos Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #08080a;
+      font-family: 'Montserrat', sans-serif;
+      color: #ffffff;
+      user-select: none;
+    }
+
+    /* Fondo Canvas (Oleaje Fluido) */
+    #bgCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Contenedor del Texto Inicial */
+    #textOverlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: 90%;
+      max-width: 650px;
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      animation: fadeIn 2.5s forwards 0.5s;
+      pointer-events: none;
+    }
+
+    .letter-title {
+      font-family: 'Alex Brush', cursive;
+      font-size: 3rem;
+      color: #ffe600;
+      text-shadow: 0 0 12px rgba(255, 230, 0, 0.6), 0 0 25px rgba(255, 200, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .letter-body {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #f0f0f5;
+      font-weight: 300;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .highlight {
+      color: #ffd700;
+      font-weight: 400;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Botón Continuar / Música */
+    #startBtn {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: transparent;
+      border: 1px solid rgba(255, 230, 0, 0.5);
+      color: #ffe600;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 230, 0, 0.2);
+      transition: all 0.4s ease;
+      opacity: 0;
+      animation: fadeIn 2s forwards 4s;
+    }
+
+    #startBtn:hover {
+      background: rgba(255, 230, 0, 0.15);
+      box-shadow: 0 0 25px rgba(255, 230, 0, 0.5);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    /* Contenedor Interactivo de Flores */
+    #flowerGarden {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: auto;
+    }
+
+    /* Animaciones CSS */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; }
+    }
+
+    /* Estilos Animados de las Flores (SVG) */
+    .flower-svg {
+      position: absolute;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+    }
+
+    /* Fases de Animación Botánica */
+    .stem-grow {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: growStem 2s ease-out forwards;
+    }
+
+    .leaf-grow {
+      transform: scale(0);
+      transform-origin: center;
+      animation: growLeaf 1s ease-out forwards 1.2s;
+    }
+
+    .bud-grow {
+      transform: scale(0);
+      transform-origin: center;
+      animation: growBud 1s ease-out forwards 1.8s;
+    }
+
+    .petal-bloom {
+      transform: scale(0);
+      transform-origin: center;
+      animation: bloomPetals 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.5s;
+    }
+
+    @keyframes growStem {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes growLeaf {
+      to { transform: scale(1); }
+    }
+    @keyframes growBud {
+      to { transform: scale(1); }
+    }
+    @keyframes bloomPetals {
+      to { transform: scale(1); }
+    }
+
+    /* Indicador sutil de toque */
+    #hintText {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255, 230, 0, 0.6);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      z-index: 15;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo Ondulado -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Texto de Entrada -->
+  <div id="textOverlay">
+    <div class="letter-title">Para ti, Mitca</div>
+    <div class="letter-body">
+      El 21 de septiembre normalmente se acostumbra a regalar flores amarillas por la llegada de la primavera, y simbolizan muchas cosas hermosas como un amor sincero, un afecto profundo o la ilusión de pasar una vida juntos.<br><br>
+      Por la circunstancia en la que me encuentro, se me dificulta regalarte flores amarillas físicamente. Pero <span class="highlight">a pesar de la distancia, a pesar de la lejanía</span> que hay entre nosotros dos, nada es un impedimento para regalártelas.<br><br>
+      Así que hice esto especialmente para ti.
+    </div>
+  </div>
+
+  <button id="startBtn">Ver mi regalo 🌻</button>
+  <div id="hintText">Toca la pantalla para hacer florecer el jardín ✨</div>
+
+  <!-- Capa del Jardín Botánico -->
+  <div id="flowerGarden"></div>
+
+  <!-- Audio de Fondo de Hillsong United - Prince of Peace -->
+  <audio id="bgMusic" loop preload="auto">
+    <!-- Nota: Reemplazar 'audio.mp3' con tu enlace directo o archivo de audio descargado -->
+    <source src="https://ia800902.us.archive.org/27/items/HillsongUnitedPrinceOfPeace/PrinceOfPeace.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    /* ==========================================================
+       1. ANIMACIÓN DE FONDO: OLEAJE SUAVE Y OSCURO
+       ========================================================== */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    let step = 0;
+    function drawWaveBackground() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Fondo degradado oscuro profundo
+      let bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+      bgGradient.addColorStop(0, '#060608');
+      bgGradient.addColorStop(1, '#0e0e14');
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Capas de Olas
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 20) {
+          let y = Math.sin((x * 0.002) + (step * 0.015) + (i * 2)) * 30 + 
+                  Math.cos((x * 0.001) + (step * 0.01)) * 20 + 
+                  (height * (0.65 + i * 0.1));
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        // Color suave con tonalidades doradas/oscuras
+        let waveGradient = ctx.createLinearGradient(0, 0, width, 0);
+        waveGradient.addColorStop(0, `rgba(35, 30, 10, ${0.15 - i * 0.03})`);
+        waveGradient.addColorStop(0.5, `rgba(50, 45, 15, ${0.25 - i * 0.04})`);
+        waveGradient.addColorStop(1, `rgba(20, 18, 8, ${0.15 - i * 0.03})`);
+
+        ctx.fillStyle = waveGradient;
+        ctx.fill();
+      }
+
+      step += 1;
+      requestAnimationFrame(drawWaveBackground);
+    }
+    drawWaveBackground();
+
+    /* ==========================================================
+       2. CONTROL DEL TEXTO Y MÚSICA
+       ========================================================== */
+    const startBtn = document.getElementById('startBtn');
+    const textOverlay = document.getElementById('textOverlay');
+    const hintText = document.getElementById('hintText');
+    const bgMusic = document.getElementById('bgMusic');
+    const garden = document.getElementById('flowerGarden');
+
+    startBtn.addEventListener('click', () => {
+      // Iniciar Música
+      bgMusic.volume = 0.5;
+      bgMusic.play().catch(e => console.log("Audio play blocked", e));
+
+      // Ocultar texto inicial suavemente
+      textOverlay.style.animation = "fadeOut 1.5s forwards";
+      startBtn.style.animation = "fadeOut 1.5s forwards";
+
+      setTimeout(() => {
+        textOverlay.style.display = "none";
+        startBtn.style.display = "none";
+
+        // Mostrar indicación
+        hintText.style.opacity = "1";
+
+        // Generar la primera Flor Principal (Estilo Enredados) en el centro
+        createTangledHeroFlower(width / 2, height * 0.85);
+
+        setTimeout(() => {
+          hintText.style.opacity = "0.4";
+        }, 4000);
+      }, 1500);
+    });
+
+    /* ==========================================================
+       3. GENERADOR BOTÁNICO DE FLORES AMARILLAS (SVG PROCEDURAL)
+       ========================================================== */
+    garden.addEventListener('click', (e) => {
+      // Nacer una flor donde se haga clic/tap
+      createRandomYellowFlower(e.clientX, e.clientY);
+    });
+
+    // Flor Central Principal (Inspirada en la flor mágica dorada)
+    function createTangledHeroFlower(x, y) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      const flowerHeight = Math.min(height * 0.5, 380);
+      
+      svg.setAttribute("class", "flower-svg");
+      svg.setAttribute("width", "200");
+      svg.setAttribute("height", flowerHeight);
+      svg.style.left = `${x - 100}px`;
+      svg.style.top = `${y - flowerHeight}px`;
+
+      // Tallo
+      const stem = document.createElementNS(svgNS, "path");
+      stem.setAttribute("d", `M 100 ${flowerHeight} Q 95 ${flowerHeight * 0.5} 100 80`);
+      stem.setAttribute("stroke", "#4a7c59");
+      stem.setAttribute("stroke-width", "5");
+      stem.setAttribute("fill", "none");
+      stem.setAttribute("class", "stem-grow");
+      svg.appendChild(stem);
+
+      // Hojas
+      const leaf1 = document.createElementNS(svgNS, "path");
+      leaf1.setAttribute("d", `M 98 ${flowerHeight * 0.6} Q 60 ${flowerHeight * 0.55} 70 ${flowerHeight * 0.45} Q 95 ${flowerHeight * 0.5} 98 ${flowerHeight * 0.6}`);
+      leaf1.setAttribute("fill", "#386641");
+      leaf1.setAttribute("class", "leaf-grow");
+      svg.appendChild(leaf1);
+
+      // Grupo de Pétalos Mágicos Dorados
+      const headGroup = document.createElementNS(svgNS, "g");
+      headGroup.setAttribute("transform", "translate(100, 80)");
+
+      // Centro Radiante
+      const center = document.createElementNS(svgNS, "circle");
+      center.setAttribute("cx", "0");
+      center.setAttribute("cy", "0");
+      center.setAttribute("r", "16");
+      center.setAttribute("fill", "#ffae00");
+      center.setAttribute("class", "bud-grow");
+
+      // Pétalos capas
+      const petalsGroup = document.createElementNS(svgNS, "g");
+      petalsGroup.setAttribute("class", "petal-bloom");
+
+      const petalCount = 12;
+      for (let i = 0; i < petalCount; i++) {
+        const angle = (360 / petalCount) * i;
+        const petal = document.createElementNS(svgNS, "path");
+        petal.setAttribute("d", "M 0 0 C -15 -35 -10 -65 0 -80 C 10 -65 15 -35 0 0");
+        petal.setAttribute("fill", i % 2 === 0 ? "#ffe600" : "#ffcc00");
+        petal.setAttribute("transform", `rotate(${angle})`);
+        petal.setAttribute("opacity", "0.9");
+        petalsGroup.appendChild(petal);
+      }
+
+      headGroup.appendChild(petalsGroup);
+      headGroup.appendChild(center);
+      svg.appendChild(headGroup);
+
+      garden.appendChild(svg);
+    }
+
+    // Variedad de Flores (Girasoles, Tulipanes, Margaritas) por clic
+    function createRandomYellowFlower(clickX, clickY) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      const fHeight = 180 + Math.random() * 100;
+      
+      svg.setAttribute("class", "flower-svg");
+      svg.setAttribute("width", "120");
+      svg.setAttribute("height", fHeight);
+      svg.style.left = `${clickX - 60}px`;
+      svg.style.top = `${clickY - fHeight + 30}px`;
+
+      // Tallo curvo aleatorio
+      const curve = (Math.random() - 0.5) * 40;
+      const stem = document.createElementNS(svgNS, "path");
+      stem.setAttribute("d", `M 60 ${fHeight} Q ${60 + curve} ${fHeight * 0.5} 60 45`);
+      stem.setAttribute("stroke", "#588157");
+      stem.setAttribute("stroke-width", "3.5");
+      stem.setAttribute("fill", "none");
+      stem.setAttribute("class", "stem-grow");
+      svg.appendChild(stem);
+
+      // Flor Head
+      const headGroup = document.createElementNS(svgNS, "g");
+      headGroup.setAttribute("transform", "translate(60, 45)");
+
+      const petalsGroup = document.createElementNS(svgNS, "g");
+      petalsGroup.setAttribute("class", "petal-bloom");
+
+      // Tipo de flor aleatorio (1: Girasol/Margarita, 2: Tulipán)
+      const type = Math.random() > 0.4 ? 1 : 2;
+
+      if (type === 1) {
+        // Estilo Margarita / Girasol
+        const pCount = 10 + Math.floor(Math.random() * 6);
+        for (let i = 0; i < pCount; i++) {
+          const angle = (360 / pCount) * i;
+          const petal = document.createElementNS(svgNS, "path");
+          petal.setAttribute("d", "M 0 0 C -8 -20 -6 -40 0 -48 C 6 -40 8 -20 0 0");
+          petal.setAttribute("fill", "#ffd000");
+          petal.setAttribute("transform", `rotate(${angle})`);
+          petalsGroup.appendChild(petal);
+        }
+        const center = document.createElementNS(svgNS, "circle");
+        center.setAttribute("r", "9");
+        center.setAttribute("fill", "#6b4226");
+        center.setAttribute("class", "bud-grow");
+        headGroup.appendChild(petalsGroup);
+        headGroup.appendChild(center);
+      } else {
+        // Estilo Tulipán
+        for (let i = -1; i <= 1; i++) {
+          const petal = document.createElementNS(svgNS, "path");
+          petal.setAttribute("d", "M 0 0 C -15 -20 -15 -40 0 -50 C 15 -40 15 -20 0 0");
+          petal.setAttribute("fill", "#ffea00");
+          petal.setAttribute("transform", `rotate(${i * 20})`);
+          petalsGroup.appendChild(petal);
+        }
+        headGroup.appendChild(petalsGroup);
+      }
+
+      svg.appendChild(headGroup);
+      garden.appendChild(svg);
+    }
+  </script>
+</body>
+</html>
